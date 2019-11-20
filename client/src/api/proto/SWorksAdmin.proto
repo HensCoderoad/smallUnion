@@ -1,0 +1,404 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "SWorks.proto";
+import "SWorksExt.proto";
+import "SWorksVset.proto";
+
+package ja.common.works;
+
+option java_multiple_files = false;
+
+service SWorksAdmin {
+	option (poet.ex_service_type) = "srv";
+	option (poet.ex_service_handler_project) = "srv.works_srv";
+	option (poet.ex_service_rpc_project) = "common.worksbase";
+
+	// 生成认证码
+	rpc GenerateVerifyCode(GenerateVerifyCodeReq) returns(GenerateVerifyCodeResp){}
+	// 获取认证的公众号的认证信息
+	rpc GetAuthorsAuthInfo(GetAuthorsAuthInfoReq) returns(GetAuthorsAuthInfoResp){}
+	// 供运营后台人员使用的更新公众号信息的服务
+	rpc UpdateAuthorAuthInfo(UpdateAuthorAuthInfoReq) returns(UpdateAuthorAuthInfoResp){}
+	// 变更作品状态
+	rpc ChangeVideoState(ChangeVideoStateReq) returns(ChangeVideoStateResp){}
+	// 变更公众号状态
+	rpc ChangeAuthorState(ChangeAuthorStateReq) returns(ChangeAuthorStateResp){}
+	// 获取已下架作品统计数据
+	rpc GetStoppedVideos(GetStoppedVideosReq) returns(GetStoppedVideosResp){}
+	// 批量获取公众号某日最高去推荐播放数的作品信息
+	rpc BatchGetAuthorTopErplayVideo(BatchGetAuthorTopErplayVideoReq) returns(BatchGetAuthorTopErplayVideoResp){}
+
+
+	// 添加认证号进入推荐白名单 TODO 删除
+	rpc AddRecommendAuthor(AddRecommendAuthorReq) returns(AddRecommendAuthorResp){}
+	// 取消认证号进入推荐白名单 TODO 删除
+	rpc RemoveRecommendAuthor(RemoveRecommendAuthorReq) returns(RemoveRecommendAuthorResp){}
+	// 批量获取认证号的推荐白名单状态 TODO 删除
+	rpc BatchGetAuthorRecommendState(BatchGetAuthorRecommendStateReq) returns(BatchGetAuthorRecommendStateResp){}
+	// 获取所有处于推荐白名单的认证号 TODO 删除
+	rpc GetAllRecommendAuthors(GetAllRecommendAuthorsReq) returns(GetAllRecommendAuthorsResp){}
+
+
+	// 获取认证号流失统计情况
+	rpc GetAuthorLossStat(GetAuthorLossStatReq) returns(GetAuthorLossStatResp){}
+	// 获取流失了N天的认证号列表
+	rpc GetAuthorsLossInDays(GetAuthorsLossInDaysReq) returns(GetAuthorsLossInDaysResp){}
+	// 初始化认证号最后发布作品的时间数据
+	rpc InitAuthorLastPubTime(InitAuthorLastPubTimeReq) returns(InitAuthorLastPubTimeResp){}
+	//作品评级--批量查询作品推荐相关的两个基准值（最高离开新作品池基准值和最低进入热门作品池基准值）
+	rpc BatchRecommend2Reference(BatchRecommend2ReferenceReq) returns(BatchRecommend2ReferenceResp){}
+	
+	// 搜索合集
+	rpc SearchVideoSet4Admin(SearchVideoSet4AdminReq) returns(SearchVideoSet4AdminResp){}
+	// 改变合集状态
+	rpc ChangeVideoSetState(ChangeVideoSetStateReq) returns(ChangeVideoSetStateResp){}
+	// 获取已下架的合集列表
+	rpc GetStoppedVideoSets(GetStoppedVideoSetsReq) returns(GetStoppedVideoSetsResp){}
+	// 以管理员身份获取合集内的作品列表
+	rpc GetVideosOfVset4Admin(GetVideosOfVset4AdminReq) returns(GetVideosOfVset4AdminResp){}
+}
+
+message BatchRecommend2ReferenceReq{
+	google.protobuf.Any head = 1;
+	repeated string vids = 2;
+}
+
+message BatchRecommend2ReferenceInfo{
+    int32 new_max_limit = 1; 			//作品曝光量超过这个值就不是新作品（后台自定义作品的暴光值，来源于具体等级但可修改成自定义的数）
+	int32 recommend_min_limit = 2;  	//作品曝光量超过这个就是热门作品（当时设置的B级所对应的暴光量）
+}
+
+message BatchRecommend2ReferenceResp{
+	google.protobuf.Any head = 1;
+	map<string,BatchRecommend2ReferenceInfo> info = 2;
+}
+
+message AuthorAuthInfo{
+	int64 uid = 1;							// 用户id
+	//string nick = 2;						// 用户昵称
+	string headimage = 3;					// 公众号头像
+	string name = 4;						// 公众号名称
+	string verifycode = 5;					// 认证码
+	string phone = 6;						// 手机号码
+	string wxno = 7;						// 微信号码
+	int64 createtime = 8;					// 创建时间/认证时间
+	string aid = 9;							// 公众号id
+	string note = 10;						// 公众号简介
+	string introducer = 11;					// 发码人
+	ja.common.works.AuthorWeightLevel weightlevel = 12;					// 权重级别
+	repeated ja.common.works.VideoCategorySimpleInfo category = 13;		//领域
+	int64 lastpubtime = 14;					// 最后发布时间
+}
+
+message AddRecommendAuthorReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+}
+
+message AddRecommendAuthorResp{
+	google.protobuf.Any head = 1;
+}
+
+message RemoveRecommendAuthorReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+}
+
+message RemoveRecommendAuthorResp{
+	google.protobuf.Any head = 1;
+}
+
+message BatchGetAuthorRecommendStateReq{
+	google.protobuf.Any head = 1;
+	repeated int64 aid = 2;
+}
+
+message BatchGetAuthorRecommendStateResp{
+	google.protobuf.Any head = 1;
+	map<int64, int32> info = 2;		// key=aid, value=状态值，value=1代表是推荐白名单
+}
+
+message GetAllRecommendAuthorsReq{
+	google.protobuf.Any head = 1;
+}
+
+message GetAllRecommendAuthorsResp{
+	google.protobuf.Any head = 1;
+	repeated int64 aid = 2;
+}
+
+message GetAuthorLossStatReq{
+	google.protobuf.Any head = 1;
+}
+
+message DayAuthorLossInfo{
+	int32 days = 1;				// 未发作品的天数, 值=11代表10天以上，12表示未发布作品
+	int32 count = 2;			// 天数对应的认证号数量
+}
+
+message GetAuthorLossStatResp{
+	google.protobuf.Any head = 1;
+	repeated DayAuthorLossInfo info = 2;
+}
+
+message GetAuthorsLossInDaysReq{
+	google.protobuf.Any head = 1;
+	int32 days = 2;
+	int32 pageid = 3;
+	int32 count = 4;
+}
+
+// 流失的认证号信息
+message LossAuthorInfo {
+	string aid = 1;										// 公众号id
+	int64 uid = 2;										// 用户id
+	string name = 3;									// 公众号名称
+	string headimage = 4;								// 公众号头像
+	string introducer = 5;								// 发码人
+	int64 lastpubtime = 6;								// 最后发布作品的时间
+	int32 videocount = 7;								// 作品数
+	ja.common.works.Author.AuthorState state = 8;		// 公众号状态
+	repeated ja.common.works.VideoCategorySimpleInfo category = 9;					//领域
+}
+
+message GetAuthorsLossInDaysResp{
+	google.protobuf.Any head = 1;
+	repeated LossAuthorInfo info = 2;
+	int32 next = 3;
+	int32 total = 4;
+}
+
+message InitAuthorLastPubTimeReq{
+	google.protobuf.Any head = 1;
+}
+
+message InitAuthorLastPubTimeResp{
+	google.protobuf.Any head = 1;
+}
+
+message GenerateVerifyCodeReq {
+	google.protobuf.Any head = 1;
+	int64 uid = 2;							// 操作用户id
+	string userName = 3;					// 操作的用户名称
+}
+
+message GenerateVerifyCodeResp {
+	google.protobuf.Any head = 1;
+	string value = 2;						// 验证码
+	int32 liveseconds = 3;					// 验证码有效时长，以秒为单位
+
+}
+
+message GetAuthorsAuthInfoReq{
+	enum ConditionTarget{
+		authorName = 0;		// 公众号名称
+		uid = 1;			// 用户id
+	}
+	google.protobuf.Any head = 1;
+	string condition = 2;					// 条件
+	int32 pageid = 3;						// 记录起始位置
+	int32 count = 4;						// 获取的记录数量
+	int32 state = 5;						// 0=正常，1=停用
+	ConditionTarget target = 6;				// 查询条件的目标
+	int64 startdate = 7;					// 开始日期
+	int64 enddate = 8;						// 结束日期
+}
+
+message GetAuthorsAuthInfoResp {
+	google.protobuf.Any head = 1;
+	repeated AuthorAuthInfo info = 2;		// 认证主体列表
+	int32 next = 3;							// 下一批数据的起始位置
+}
+
+message UpdateAuthorAuthInfoReq{
+	google.protobuf.Any head = 1;
+	string aid = 2;							// 公众号id
+	string headimage = 3;                   // 头像，为空表示设置成默认头像
+	string name = 4;                        // 名称
+	string note = 5;                        // 简介
+	string phone = 6;						// 联系人电话
+	string wxno = 7;						// 联系人微信号
+	int64 opuid = 8;						// 操作人的用户id
+	ja.common.works.AuthorWeightLevel weightlevel = 9;		// 优先级
+	repeated int64 category = 10;			//领域id（多个用英文逗号隔开）
+}
+
+message UpdateAuthorAuthInfoResp{
+	google.protobuf.Any head = 1;
+}
+
+message ChangeVideoStateReq{
+	google.protobuf.Any head = 1;
+	string vid = 2;
+	ja.common.works.Video.VideoState state = 3;
+	string reason = 4;					//操作原因
+}
+
+message ChangeVideoStateResp{
+	google.protobuf.Any head = 1;
+}
+
+message ChangeAuthorStateReq{
+	google.protobuf.Any head = 1;
+	string aid = 2;
+	ja.common.works.Author.AuthorState state = 3;
+	string reason = 4;					//操作原因
+}
+
+message ChangeAuthorStateResp{
+	google.protobuf.Any head = 1;
+}
+
+message GetStoppedVideosReq{
+	enum SortField{
+		stopTime = 0;		// 下架时间
+		playCount = 1;
+		playUserCount = 2;
+		likeCount = 3;
+	}
+	enum ConditionTarget{
+		videoName = 0;
+		authorName = 1;
+	}
+	google.protobuf.Any head = 1;
+	string condition = 2;			// 搜索条件
+	ConditionTarget target = 3;		// 搜索的目标
+	int64 starttime = 4;			// 下架的开始日期
+	int64 endtime = 5;				// 下架的结束日期
+	int32 pageid = 6;
+	int32 count = 7;
+	SortField sort = 8;				// 排序的字段
+	bool asc = 9;					// 排序是升序还是降序
+}
+
+message StoppedVideoInfo{
+	string vid = 1;					// 作品id
+	string videoName = 2;			// 作品名称
+	ja.common.works.VideoType videoType = 3;		// 作品类型
+	string videoCoverUrl = 4;		// 作品封面
+	string videoUrl = 5;			// 作品视频地址
+	int64 publishtime = 6;			// 发布时间
+	string aid = 7;					// 作品所属公众号id
+	string authorName = 8;			// 作品所属公众号名称
+	int64 totalPlayCount = 9;			// 总播放次数
+	int64 totalPlayUserCount = 10;		// 总播放人数
+	int64 totalLikeCount = 11;			// 总点赞数
+	ja.common.works.Video.VideoState videoState = 12;	// 作品的状态
+	int64 stopTime = 13;			// 下架时间
+}
+
+message GetStoppedVideosResp{
+	google.protobuf.Any head = 1;
+	repeated StoppedVideoInfo info = 2;
+	int32 next = 3;
+}
+
+message BatchGetAuthorTopErplayVideoReq{
+	google.protobuf.Any head = 1;
+	repeated string aid = 2;
+	int64 date = 3;
+}
+
+message BatchGetAuthorTopErplayVideoResp{
+	message VideoInfo{
+		ja.common.works.VideoSimpleInfo simpleinfo = 1;
+		ja.common.works.VideoExtInfo extinfo = 2;
+	}
+	google.protobuf.Any head = 1;
+	map<string, VideoInfo> info = 2;
+}
+
+message SearchVideoSet4AdminReq{
+	enum ConditionTarget{
+		videosetName = 0;
+		authorId = 1;
+	}
+	google.protobuf.Any head = 1;
+	string condition = 2;
+	ConditionTarget target = 3;		// 搜索的目标
+	int64 pageid = 4;
+	int32 count = 5;
+	int64 starttime = 6;			// 合集建立的开始日期
+	int64 endtime = 7;				// 合集建立的结束日期
+	int32 state = 8;				// 0=搜索所有，1=搜索正常状态的，2=搜索已停用的
+}
+
+message SearchVideoSet4AdminResp{
+	google.protobuf.Any head = 1;
+	repeated VsetInfo info = 2;
+	int64 next = 3;
+	int64 total = 4;
+}
+
+message ChangeVideoSetStateReq{
+	google.protobuf.Any head = 1;
+	int64 vsid = 2;
+	VideoSetState state = 3;
+	string reason = 4;					//原因说明
+	int64 audituid = 5;					// 审核人员uid（运营后台的自身的用户id,不是音盟用户uid）
+}
+
+message ChangeVideoSetStateResp{
+	google.protobuf.Any head = 1;
+}
+
+message GetStoppedVideoSetsReq{
+	enum ConditionTarget{
+		videosetName = 0;
+		authorId = 1;
+	}
+	google.protobuf.Any head = 1;
+	string condition = 2;			// 搜索条件
+	ConditionTarget target = 3;		// 搜索的目标
+	int64 starttime = 4;			// 下架的开始日期
+	int64 endtime = 5;				// 下架的结束日期
+	int32 pageid = 6;
+	int32 count = 7;
+}
+
+message GetStoppedVideoSetsResp{
+	message StoppedVideoSetInfo{
+		int64 vsid = 1;					// 合集id
+		string name = 2;			// 合集名称
+		string coverurl = 3;		// 合集封面
+		int64 aid = 4;				// 合集所属公众号id
+		string authorname = 5;		// 合集所属公众号名称
+		int64 stoptime = 6;			// 下架时间
+		int32 videocount = 7;		// 合集作品数
+		repeated VideoCategorySimpleInfo category = 8;		// 分类
+		int64 lastupdatetime = 9;
+	}
+
+	google.protobuf.Any head = 1;
+	repeated StoppedVideoSetInfo info = 2;
+	int32 next = 3;
+	int64 total = 4;
+}
+
+message GetVideosOfVset4AdminReq{
+	google.protobuf.Any head = 1;
+	int64 vsid = 2;
+	int64 pageid = 3;
+	int32 count = 4;
+}
+
+message GetVideosOfVset4AdminResp{
+	message VideoInfo{
+		string aid = 1;					// 作品所属的认证号aid
+		string vid = 2;					// 作品id
+		string title = 3;				// 作品标题
+		string videourl = 4;			// 作品url
+		string coverurl = 5;			// 封面
+		int32 duration = 6;				// 时长
+		VideoType type = 7;				// 作品类型
+		int32 pos = 8;					// 作品在合集内的序号
+		int32 playcount = 9;			// 作品播放数
+	}
+	google.protobuf.Any head = 1;
+	repeated VideoInfo info = 2;
+	int64 next = 3;
+}
+
+

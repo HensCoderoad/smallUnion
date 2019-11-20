@@ -1,0 +1,190 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "WorksCommonEnum.proto";
+import "SWorksDomainVset.proto";
+import "SWorksDomainVideo.proto";
+
+package ja.common.works;
+
+option java_multiple_files = false;
+
+service SWorksVset {
+	option (poet.ex_service_type) = "srv";
+	option (poet.ex_service_handler_project) = "srv.works_srv";
+	option (poet.ex_service_rpc_project) = "common.worksbase";
+
+	// 添加作品合
+	rpc AddVset2(AddVset2Req) returns(AddVset2Resp){}
+
+	// 获取某个作品合集的信息
+	rpc GetVsetInfo2(GetVsetInfo2Req) returns(GetVsetInfo2Resp){}
+
+	// 获取某认证号的合集列表（小程序前端认证号个人页的合集tab使用）
+	rpc GetVsetsOfAuthor2(GetVsetsOfAuthor2Req) returns(GetVsetsOfAuthor2Resp){}
+
+	// 访客能看到的某认证号个人页里的全部tab，作品合集和作品列表混合的协议（小程序前端使用）
+	rpc GetMixedVideosOfAuthor2(GetMixedVideosOfAuthor2Req) returns(GetMixedVideosOfAuthor2Resp){}
+
+	// 作者本人能看到的作者个人页里的全部tab，作品合集和作品列表混合的协议（小程序前端使用）
+	rpc GetMixedVideos4Owner2(GetMixedVideos4Owner2Req) returns(GetMixedVideos4Owner2Resp){}
+
+	// 以访客身份获取合集内的作品列表（小程序用）
+	rpc GetVideosOfVset2(GetVideosOfVset2Req) returns(GetVideosOfVset2Resp){}
+
+	// 以管理者身份获取合集内的作品列表（小程序用）
+	rpc GetVideosOfVset4Owner2(GetVideosOfVset4Owner2Req) returns(GetVideosOfVset4Owner2Resp){}
+
+	// 获取某个作品所处合集中某个位置的作品列表（小程序播放页使用）
+	rpc GetNeighborVideos2(GetNeighborVideos2Req) returns(GetNeighborVideos2Resp){}
+
+	// 获取某个合集内的作品（发布后台专用）
+	rpc GetVideosOfVset4Web2(GetVideosOfVset4Web2Req) returns(GetVideosOfVset4Web2Resp){}
+
+	// 获取作品的合集信息
+	rpc GetVideoVsetInfo2(GetVideoVsetInfo2Req) returns(GetVideoVsetInfo2Resp){}
+
+}
+
+// 单个认证号最多要添加200个认证号
+message AddVset2Req{
+	google.protobuf.Any head = 1;
+	int64 opuid = 2;				// 操作者用户id
+	int64 aid = 3;					// 认证号id
+	string name = 4;				// 标题，2-15个字符
+	string coverurl = 5;			// 封面
+	repeated int64 category = 6;	// 分类id
+	string note = 7;				// 简介，100个字符内
+	ja.common.works.enums.ProductChargeType charge_type = 8;		// 收费类型
+	int32 price = 9;					// 价格，以分为单位
+	ja.common.works.enums.ProductChargeType ios_charge_type = 10;	// ios收费类型
+}
+
+message AddVset2Resp{
+	google.protobuf.Any head = 1;
+	int64 vsid = 2;
+}
+
+message GetVsetInfo2Req{
+	google.protobuf.Any head = 1;
+	int64 vsid = 2;
+}
+
+message GetVsetInfo2Resp{
+	google.protobuf.Any head = 1;
+	ja.common.works.domain.vset.VsetBo info = 2;
+}
+
+message GetVsetsOfAuthor2Req{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+	int64 offset = 3;
+	int32 count = 4;
+	int32 state = 5;	// 状态条件，0=取所有，1=只取正常状态的，2=取下架状态的
+}
+
+message GetVsetsOfAuthor2Resp{
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.vset.VsetBo info = 2;
+	int64 next = 3;
+	int32 total = 4;
+}
+
+message GetMixedVideosOfAuthor2Req{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+	int64 offset = 3;
+	int32 count = 4;
+	int64 uid = 5;							// 当前观众的用户id
+}
+
+message GetMixedVideosOfAuthor2Resp{
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.video.MixedVideoBo info = 2;
+	int64 next = 3;
+	int32 total = 4;
+}
+
+message GetMixedVideos4Owner2Req{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+	int64 offset = 3;
+	int32 count = 4;
+	int64 uid = 5;							// 当前观众的用户id
+}
+
+message GetMixedVideos4Owner2Resp{
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.video.MixedVideoBo info = 2;
+	int64 next = 3;
+	int32 total = 4;
+}
+
+message GetVideosOfVset2Req{
+	google.protobuf.Any head = 1;
+	int64 vsid = 2;
+	int64 offset = 3;
+	int32 count = 4;
+	bool asc = 5; 		// 是否按作品在合集中的位置升序排列，true=升序，默认为false即降序
+}
+
+message GetVideosOfVset2Resp{
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.video.VideoBo info = 2;
+	int64 next = 3;
+	int32 total = 4;					// 作品总数量
+}
+
+message GetVideosOfVset4Owner2Req{
+	google.protobuf.Any head = 1;
+	int64 vsid = 2;
+	int64 offset = 3;
+	int32 count = 4;
+	bool asc = 5; 		// 是否按作品在合集中的位置升序排列，true=升序，默认为false即降序
+}
+
+message GetVideosOfVset4Owner2Resp{
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.video.VideoBo info = 2;
+	int64 next = 3;
+	int32 total = 4;					// 作品总数量
+}
+
+message GetNeighborVideos2Req{
+	google.protobuf.Any head = 1;
+	string vid = 2;
+	int32 count = 3;			// 要获取的作品数量
+	int32 type = 4;				// 0=获取vid附近的作品，1=获取目标vid前一页的作品，2=获取目标vid下一页的作品。注：type=0时vid应传入当前正在播放的作品，type=1时vid应传入当前已加载的作品列表第一个作品，type=2时vid应传入当前已加载的作品列表的最后一个作品
+}
+
+message GetNeighborVideos2Resp{
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.video.VideoBo info = 2;
+}
+
+message GetVideosOfVset4Web2Req{
+	google.protobuf.Any head = 1;
+	int64 vsid = 2;
+	int64 offset = 3;
+	int32 count = 4;
+	bool asc = 5; 		// 是否按作品在合集中的位置升序排列，true=升序，默认为false即降序
+}
+
+message GetVideosOfVset4Web2Resp{
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.video.VideoBo info = 2;			// 作品信息
+	int64 next = 3;								// next = 0 代表没有下一页
+	int64 total = 4;
+}
+
+message GetVideoVsetInfo2Req{
+	google.protobuf.Any head = 1;
+	string vid = 2;
+}
+
+message GetVideoVsetInfo2Resp{
+	google.protobuf.Any head = 1;
+	ja.common.works.domain.vset.VsetBo info = 2;
+}
+

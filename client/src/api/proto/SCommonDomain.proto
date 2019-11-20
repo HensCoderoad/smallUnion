@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package ja.common;
+
+option java_multiple_files = false;
+
+// 结果数据的封装形式
+enum PackTypeEnum{
+	map = 0;	// 以map的形式返回数据
+	list = 1;	// 以list的形式返回数据，且按传入vid的顺序存放
+}
+
+//通用的批量操作的结果
+message CommonResultBo{
+	int32 successNum = 1;          // 成功数量
+	int32 failNum = 2;             // 失败数量
+	repeated string failId = 3;  // 失败的id列表
+}
+
+message CommonLongResultBo{
+	int32 successNum = 1;          // 成功数量
+	int32 failNum = 2;             // 失败数量
+	repeated int64 failId = 3;   // 失败的id列表
+}
+
+
+
+

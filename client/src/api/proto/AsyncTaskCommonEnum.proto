@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "PoetType.proto";
+
+package ja.common.asynctask.enums;
+
+option java_multiple_files = false;
+
+//异步任务类型
+enum Task {
+	Task_reserve = 0;		    //保留
+	Task_settleMoney = 1;		//1=商务结算统计
+    Task_calcActUserVideoLikeStat = 2; // 统计活动用户作品点赞统计信息
+}
+
+//任务状态  1=待处理  2=处理失败  3=处理失败，达到最大次数,目前是5次  4=处理成功
+enum TaskStatus {
+	TaskStatus_reserve = 0;		//保留
+	TaskStatus_waiting = 1;		//1=待处理
+	TaskStatus_failed = 2;		    //2=处理失败
+	TaskStatus_failedMaxNum = 3;	//3=处理失败，达到最大次数,目前是5次
+	TaskStatus_success = 4;		//4=处理成功
+}

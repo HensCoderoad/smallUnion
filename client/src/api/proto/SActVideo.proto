@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "SActDomain.proto";
+
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+service SActVideo {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.act_srv";
+    option (poet.ex_service_rpc_project) = "common.actbase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 活动--作品--运营后台--查询某个活动的作品列表分页
+    rpc ListActVideo(ListActVideoReq) returns(ListActVideoResp){}
+
+    // 活动--作品--运营后台--查询某个活动的作品总数
+    rpc CountActVideo(CountActVideoReq) returns(CountActVideoResp){}
+
+
+}
+
+
+message CountActVideoReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;         //活动id
+}
+
+message CountActVideoResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+message ListActVideoReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;         //活动id
+    int32 offset = 3;       //
+    int32 size = 4;       //
+}
+
+message ListActVideoResp {
+    google.protobuf.Any head = 1;
+    repeated string vid = 2;
+}
+
+
+
+

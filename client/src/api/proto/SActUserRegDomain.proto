@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "UserCommonEnum.proto";
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+//用户注册渠道
+message UserRegSourceBo {
+	int64 uid = 1;						//用户uid
+	string regSource = 2;				//注册的来源具体值
+	ja.common.user.enums.UserRegSourceTypeEnum userRegSourceType = 3; //注册渠道类型
+	int32 regTime = 4;		//注册时间，单位：秒
+}
+
+
+
+

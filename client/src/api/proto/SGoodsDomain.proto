@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "GoodsCommonEnum.proto";
+
+package ja.common.goods;
+
+option java_multiple_files = false;
+
+//商品信息
+message GoodsBo {
+	int64 id = 1;		//商品id
+	string name = 2; 			//商品名称
+	string note = 3;			//商品描述
+	string imageUrl = 4;		//商品图片地址
+	int32 price = 5;			//商品价格，单位：分
+	ja.common.goods.enums.GoodsStatusEnum goodsStatus = 6;
+	int32 createTime = 7;		// 创建时间,单位：秒
+	int32 updateTime = 8;		// 修改时间,单位：秒
+}
+
+//商品物件
+message GoodsItemBo {
+	int64 id = 1;		//记录id
+	GoodsBo goodsBo = 2; 			//关联商品信息
+	string statusDesc = 3;			//状态描述
+	ja.common.goods.enums.GoodsItemStatusEnum goodsItemStatus = 4;
+	ja.common.goods.enums.BizTypeEnum bizType = 5;
+	int32 createTime = 6;		// 创建时间,单位：秒
+	int32 updateTime = 7;		// 修改时间,单位：秒
+}
+

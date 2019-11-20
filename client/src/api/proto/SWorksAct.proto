@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "WorksCommonEnum.proto";
+import "SWorksDomainVideo.proto";
+
+package ja.common.works;
+
+option java_multiple_files = false;
+
+service SWorksAct {
+	option (poet.ex_service_type) = "srv";
+	option (poet.ex_service_handler_project) = "srv.works_srv";
+	option (poet.ex_service_rpc_project) = "common.worksbase";
+
+    // 添加一个活动作品	TODO	act-video	待测试（这里要向活动服务查询活动的状态是否允许用户发布作品参与，在es中的作品信息要加上作品所属的活动，查询会用到）
+    rpc AddActVideo(AddActVideoReq) returns(AddActVideoResp){}
+
+    // 分页列出某活动的作品列表     TODO    act-video	待测试
+    rpc ListActVideos(ListActVideosReq) returns(ListActVideosResp){}
+
+    // 参与某活动的作品数量   TODO	act-video	待测试(srv的实现方法应该可以指定状态)
+    rpc CountOfActVideos(CountOfActVideosReq) returns(CountOfActVideosResp){}
+
+    // 列出某用户参与某活动的的作品，且必须在某段时间内有被点赞     TODO    act-video	待测试
+    rpc ListActUserBeLikedVideos(ListActUserBeLikedVideosReq) returns(ListActUserBeLikedVideosResp){}
+}
+
+message ListActVideosReq{
+    enum OrderBy{
+        PublishTime = 0;
+        LikeCount = 1;
+        PlayCount = 2;
+    }
+    google.protobuf.Any head = 1;
+    int64 act_id = 2;           // 活动id
+    int64 offset = 3;           // 记录起始位置，从0开始
+    int32 count = 4;            // 记录数量
+    OrderBy order_by = 6;         // 排序, 1=发布时间，2=点赞数量，3=播放量
+    bool asc = 7;               // 是否升序
+    int64 uid = 8;              // 用户id（可为空）
+    bool user_video_first = 9;  // 用户作品优先展示
+}
+
+message ListActVideosResp{
+    repeated ja.common.works.domain.video.VideoBo info = 2;
+    google.protobuf.Any head = 1;
+    int64 next = 3;
+}
+
+message AddActVideoReq{
+    google.protobuf.Any head = 1;
+    int64 act_id = 2;					// 活动id
+    string video_url = 3;				// 作品url
+    string cover_url = 4;				// 封面url
+    ja.common.works.enums.VideoType video_type = 5;						// 作品类型
+    int32 duration = 6;					// 时长
+    string title = 7;					// 标题
+    string note = 8;					// 内容说明
+    string share_image = 9;				// 分享时使用的图片，如果为空则默认取封面
+    int32 width = 10;					// 视频的宽度
+    int32 height = 11;					// 视频的高度
+    string bid = 12;					// 业务流水号，重复提交同一个作品该值必须是一样的
+    repeated int64 category = 13;		//领域id
+    int64 opuid = 14;                   //操作人uid
+}
+
+message AddActVideoResp{
+    google.protobuf.Any head = 1;
+    string vid = 2;
+}
+
+message CountOfActVideosReq{
+    google.protobuf.Any head = 1;
+    int64 act_id = 2;
+}
+
+message CountOfActVideosResp{
+    google.protobuf.Any head = 1;
+    int32 count = 2;
+}
+
+message ListActUserBeLikedVideosReq{
+    google.protobuf.Any head = 1;
+    int64 act_id = 2;
+    int64 uid = 3;
+    int32 like_time_start = 4;
+    int32 like_time_end = 5;
+}
+
+message ListActUserBeLikedVideosResp{
+    google.protobuf.Any head = 1;
+    repeated ja.common.works.domain.video.VideoBo info = 2;
+}

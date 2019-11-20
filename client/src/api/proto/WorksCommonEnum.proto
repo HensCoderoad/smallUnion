@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+import "PoetType.proto";
+
+package ja.common.works.enums;
+
+option java_multiple_files = false;
+
+// 作品的类型
+enum VideoType{
+	VideoType_Video = 0;	// 视频
+	VideoType_Audio = 1;	// 音频
+}
+
+// 作品的状态
+enum VideoState{
+	VideoState_Normal = 0;		// 正常
+	VideoState_Stopped = 1;		// 停用
+}
+
+// 合集的状态
+enum VideoSetState{
+	VideoSetState_Reserved = 0;		// 占位
+	VideoSetState_Normal = 1;		// 正常
+	VideoSetState_Stop = 2;			// 下架
+}
+
+// 认证号的状态
+enum AuthorState {
+	AuthorState_Normal = 0; // 正常
+	AuthorState_Stopped = 1; // 停用
+}
+
+// 作品的发布状态
+enum PublishState{
+	PublishState_Published = 0;					// 已发布
+	PublishState_Unpublished = 1;				// 未发布
+}
+
+// 物品类型
+enum ProductType {
+	ProductType_Reserved = 0;		// 无效的值，不可使用
+	ProductType_Video = 1;			// 作品
+	ProductType_VideoSet = 2;		// 合集
+}
+
+// 可供搜索的物品类型
+enum SearchProductType {
+	SearchProductType_All = 0;			// 所有
+	SearchProductType_Video = 1;		// 作品
+	SearchProductType_VideoSet = 2;		// 合集
+}
+
+// 购买状态
+enum PurchaseState{
+	PurchaseState_Reserved = 0;
+	PurchaseState_No = 1;	// 未购买
+	PurchaseState_Yes = 2;	// 已购买
+}
+
+// 物品的收费类型
+enum ProductChargeType{
+	ProductChargeType_Reserved = 0;	// 占位项
+	ProductChargeType_Free = 1;		// 免费的
+	ProductChargeType_Charge = 2;	// 收费的
+}
+
+// 物品的收费类型，用于搜索
+enum SearchProductChargeType{
+	SearchProductChargeType_All = 0;		// 所有
+	SearchProductChargeType_Free = 1;		// 免费的
+	SearchProductChargeType_Charge = 2;		// 收费的
+}
+
+// 与分享相关的定义
+message ShareDef {
+	// 分享者类型
+	enum SharerType {
+		User = 0;
+		Author = 1;
+	}
+	// 分享的内容类型
+	enum ContentType {
+		SingleVideo = 0; // 单个作品
+		AuthorPage = 1; // 认证号个人页
+		VideoCollection = 2; // 作品合集
+		Program = 3;		// 小程序
+	}
+	// 分享的目的地类型
+	enum DestType {
+		WxFriend = 0; // 微信好友/群
+		Poster = 1; // 海报
+	}
+}
+
+// 作品的业务来源类型
+enum BusinessSourceType{
+    BusinessSourceType_Reserved = 0;    // 占位项
+    BusinessSourceType_Author = 1;     // 认证号
+    BusinessSourceType_Activity = 2;   // 活动
+}
+
+// 作品业务来源类型可查询的值
+enum SearchBusinessSourceType{
+    SearchBusinessSourceType_All = 0;        // 所有
+    SearchBusinessSourceType_Author = 1;     // 认证号
+    SearchBusinessSourceType_Activity = 2;   // 活动
+}
+
+
+//作品审核状态  0=待审核  1=已通过  2=不通过
+enum VideoAuditState{
+    VideoAuditState_WaitingAudit = 0;            // 待审核
+    VideoAuditState_Pass = 1;                    // 已通过
+    VideoAuditState_NotPass = 2;                 // 不通过
+}
+
+enum ActVideoOrderBy{
+    ActVideoOrderBy_PublishTime = 0;
+    ActVideoOrderBy_LikeCount = 1;
+    ActVideoOrderBy_PlayCount = 2;
+}

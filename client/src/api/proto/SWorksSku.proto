@@ -1,0 +1,311 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "SWorksDomainSku.proto";
+import "WorksCommonEnum.proto";
+import "SWorksDomainVideo.proto";
+
+package ja.common.works;
+
+option java_multiple_files = false;
+
+service SWorksSku {
+	option (poet.ex_service_type) = "srv";
+	option (poet.ex_service_handler_project) = "srv.works_srv";
+	option (poet.ex_service_rpc_project) = "common.worksbase";
+
+	//sku价格--查看单个的详情	TODO pay-video 待实现
+	rpc GetSkuPrice(GetSkuPriceReq) returns(GetSkuPriceResp){}
+
+	//sku价格--查看多个的详情	TODO pay-video 待实现
+	rpc BatchGetSkuPrice(BatchGetSkuPriceReq) returns(BatchGetSkuPriceResp){}
+
+	// 通过 物品id、物品类型 批量获取物品的sku信息	TODO pay-video 待实现
+	rpc BatchGetProductSkuInfo(BatchGetProductSkuInfoReq) returns(BatchGetProductSkuInfoResp){}
+
+	// 列出用户购买的记录	TODO pay-video 待实现
+	rpc ListUserPurchasedItems(ListUserPurchasedItemsReq) returns(ListUserPurchasedItemsResp){}
+
+	// 用户对物品的购买状态	TODO pay-video 待实现
+	rpc BatchGetPurchaseState(BatchGetPurchaseStateReq) returns(BatchGetPurchaseStateResp){}
+
+	// 用户对物品的购买状态	TODO pay-video 待实现
+	rpc BatchGetSkuPurchaseState(BatchGetSkuPurchaseStateReq) returns(BatchGetSkuPurchaseStateResp){}
+
+	// 批量获取认证号旗下物品的销售量		TODO pay-video 待实现
+	rpc BatchGetProductSaleCountByAid(BatchGetProductSaleCountByAidReq) returns(BatchGetProductSaleCountByAidResp){}
+
+	// 批量获取认证号旗下物品的购买人数	TODO pay-video 待实现
+	rpc BatchGetProductSaleUserCountByAid(BatchGetProductSaleUserCountByAidReq) returns(BatchGetProductSaleUserCountByAidResp){}
+
+	// 批量按物品类型和id获取其收费属性	TODO pay-video 待实现
+	rpc BatchGetProductChargeInfo(BatchGetProductChargeInfoReq) returns(BatchGetProductChargeInfoResp){}
+
+	// 批量按物品类型和id获取其销售量		TODO pay-video 待实现
+	rpc BatchGetProductSaleCount(BatchGetProductSaleCountReq) returns(BatchGetProductSaleCountResp){}
+
+	// 批量按物品类型和id获取其销售金额	TODO pay-video 待实现
+	rpc BatchGetProductSaleAmount(BatchGetProductSaleAmountReq) returns(BatchGetProductSaleAmountResp){}
+
+	// 批量获取认证号的收入统计			TODO pay-video 待实现
+	rpc BatchGetAuthorIncomeSummary(BatchGetAuthorIncomeSummaryReq) returns(BatchGetAuthorIncomeSummaryResp){}
+
+	// 批量获取认证号的作品统计	TODO pay-video 待实现
+	rpc BatchGetAuthorProductSummary(BatchGetAuthorProductSummaryReq) returns(BatchGetAuthorProductSummaryResp){}
+
+	// 列出认证号的收费作品列表	TODO pay-video 待实现
+	rpc ListAuthorChargedVids(ListAuthorChargedVidsReq) returns(ListAuthorChargedVidsResp){}
+
+	// 列出认证号的收费合集列表	TODO pay-video 待实现
+	rpc ListAuthorChargedVsids(ListAuthorChargedVsidsReq) returns(ListAuthorChargedVsidsResp){}
+
+	// 添加结算记录	TODO pay-video 待实现
+	rpc AddReceipt(AddReceiptReq) returns(AddReceiptResp){}
+
+//	// 删除结算记录	TODO pay-video 待实现
+//	rpc DeleteReceipt(DeleteReceiptReq) returns(DeleteReceiptResp){}
+
+	// 获取认证号结算记录	TODO pay-video 待实现
+	rpc ListReceipt(ListReceiptReq) returns(ListReceiptResp){}
+
+	// 认证号收费作品的信息及销售情况		TODO pay-video 待实现
+	rpc ListAuthorChargedVideos(ListAuthorChargedVideosReq) returns(ListAuthorChargedVideosResp){}
+
+	// 认证号收费合集的信息及销售情况		TODO pay-video 待实现
+	rpc ListAuthorChargedVsets(ListAuthorChargedVsetsReq) returns(ListAuthorChargedVsetsResp){}
+
+}
+
+
+message GetSkuPriceReq{
+	google.protobuf.Any head = 1;	//请求头
+	int64 skuId = 2;
+}
+
+message GetSkuPriceResp{
+	google.protobuf.Any head = 1;	//请求头
+	ja.common.works.domain.sku.SkuPriceBo info = 2;
+}
+
+message BatchGetSkuPriceReq{
+	google.protobuf.Any head = 1;	//请求头
+	repeated int64 skuId = 2;
+}
+
+message BatchGetSkuPriceResp{
+	google.protobuf.Any head = 1;	//请求头
+	map<int64, ja.common.works.domain.sku.SkuPriceBo> infos = 2;
+}
+
+message BatchGetProductSkuInfoReq{
+	google.protobuf.Any head = 1;
+	ja.common.works.enums.ProductType product_type = 2;
+	repeated string product_id = 3;
+}
+
+message BatchGetProductSkuInfoResp{
+	google.protobuf.Any head = 1;
+	map<string, ja.common.works.domain.sku.SkuPriceBo> info = 2;
+}
+
+message ListUserPurchasedItemsReq{
+	google.protobuf.Any head = 1;
+	int64 uid = 2;						// 用户id
+	int32 buy_time_start = 3;			// 购买时间起始点
+	int32 buy_time_end = 4;				// 购买时间终结点
+	int32 offset = 5;
+	int32 count = 6;
+	ja.common.works.enums.SearchProductType product_type = 7;	// 物品类型
+}
+
+message ListUserPurchasedItemsResp {
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.sku.SkuPurchaseItemBo item = 2;
+	int32 next = 3;
+}
+
+message BatchGetSkuPurchaseStateReq{
+	google.protobuf.Any head = 1;
+	int64 uid = 2;
+	repeated int64 sku_id = 4;
+}
+
+message BatchGetSkuPurchaseStateResp{
+	google.protobuf.Any head = 1;
+	map<int64, ja.common.works.enums.PurchaseState> info = 2;
+}
+
+message BatchGetPurchaseStateReq{
+	google.protobuf.Any head = 1;
+	int64 uid = 2;
+	ja.common.works.enums.ProductType product_type = 3;
+	repeated string product_id = 4;
+}
+
+message BatchGetPurchaseStateResp{
+	google.protobuf.Any head = 1;
+	map<string, ja.common.works.enums.PurchaseState> info = 2;
+}
+
+message BatchGetProductSaleCountByAidReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+	int32 start_time = 3;
+	int32 end_time = 4;
+}
+
+message BatchGetProductSaleCountByAidResp{
+	google.protobuf.Any head = 1;
+	int32 count = 2;
+}
+
+message BatchGetProductSaleUserCountByAidReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+	int32 start_time = 3;
+	int32 end_time = 4;
+}
+
+message BatchGetProductSaleUserCountByAidResp{
+	google.protobuf.Any head = 1;
+	int32 count = 2;
+}
+
+message BatchGetProductChargeInfoReq{
+	google.protobuf.Any head = 1;
+	ja.common.works.enums.ProductType product_type = 2;		// 物品的类型，1=作品，2=合集
+	repeated string product_id = 3;							// 作品的vid或合集的vsid
+}
+
+message BatchGetProductChargeInfoResp{
+	google.protobuf.Any head = 1;
+	map<string, ja.common.works.domain.sku.ProductChargeBo> info = 2;	// 物品id与其收费属性的映射
+}
+
+message BatchGetProductSaleCountReq {
+	google.protobuf.Any head = 1;
+	ja.common.works.enums.ProductType product_type = 2; // 物品的类型，1=作品，2=合集
+	repeated string product_id = 3; // 作品的vid或合集的vsid
+}
+
+message BatchGetProductSaleCountResp {
+	google.protobuf.Any head = 1;
+	map<string, int32> info = 2;	// 物品id与其销售量的映射
+}
+
+message BatchGetProductSaleAmountReq{
+	google.protobuf.Any head = 1;
+	ja.common.works.enums.ProductType product_type = 2; // 物品的类型，1=作品，2=合集
+	repeated string product_id = 3; // 作品的vid或合集的vsid
+}
+
+message BatchGetProductSaleAmountResp {
+	google.protobuf.Any head = 1;
+	map<string, int32> info = 2; // 物品id与其销售金额的映射（金额单位为分）
+}
+
+message BatchGetAuthorIncomeSummaryReq{
+	google.protobuf.Any head = 1;
+	repeated int64 aid = 2;
+}
+
+message BatchGetAuthorIncomeSummaryResp{
+	google.protobuf.Any head = 1;
+	map<int64, ja.common.works.domain.sku.AuthorIncomeSummaryBo> info = 2;
+}
+
+message BatchGetAuthorProductSummaryReq{
+	google.protobuf.Any head = 1;
+	repeated int64 aid = 2;
+}
+
+message BatchGetAuthorProductSummaryResp{
+	google.protobuf.Any head = 1;
+	map<int64, ja.common.works.domain.sku.AuthorProductSummaryBo> info = 2;
+}
+
+message ListAuthorChargedVidsReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+	int32 offset = 3;
+	int32 count = 4;
+}
+
+message ListAuthorChargedVidsResp{
+	google.protobuf.Any head = 1;
+	repeated string vid = 2;
+	int32 next = 3;
+}
+
+message ListAuthorChargedVsidsReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+	int32 offset = 3;
+	int32 count = 4;
+}
+
+message ListAuthorChargedVsidsResp{
+	google.protobuf.Any head = 1;
+	repeated int64 vsid = 2;
+	int32 next = 3;
+}
+
+message AddReceiptReq{
+	google.protobuf.Any head = 1;
+	int32 pay_time = 2;			// 结算时间
+	int32 amount = 3;			// 结算金额
+	int32 pay_amount = 4;		// 实付金额
+	int32 tax_rate = 5;			// 税点，以10000为基数，如17%则值为1700
+	int32 tax_rate_wx= 6;		// 微信税点，以10000为基数，如1万块收6块，则值为6;如果1千块收6块则值为60
+	string pay_user = 7;		// 结算人
+	int64 opuid = 8;			// 记录操作人uid
+	int64 aid = 9;				// 结算的认证号
+
+}
+
+message AddReceiptResp{
+	google.protobuf.Any head = 1;
+	int64 id = 2;				// 记录id
+}
+
+//message DeleteReceiptReq{
+//	google.protobuf.Any head = 1;
+//	int64 id = 2;
+//}
+//
+//message DeleteReceiptResp{
+//	google.protobuf.Any head = 1;
+//}
+
+message ListReceiptReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+	int32 pay_time_start = 3;
+	int32 pay_time_end = 4;
+}
+
+message ListReceiptResp{
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.sku.ReceiptBo info = 2;
+}
+
+message ListAuthorChargedVideosReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+}
+
+message ListAuthorChargedVideosResp{
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.video.ChargedVideoBo info = 2;
+}
+
+message ListAuthorChargedVsetsReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+}
+
+message ListAuthorChargedVsetsResp{
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.video.ChargedVsetBo info = 2;
+}

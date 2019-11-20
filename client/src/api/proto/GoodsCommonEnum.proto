@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "PoetType.proto";
+
+package ja.common.goods.enums;
+
+option java_multiple_files = false;
+
+//商品状态 -2=已删除  -1=已停用   1=正常
+enum GoodsStatusEnum {
+	GoodsStatus_reserve = 0;		//保留
+	GoodsStatus_deleted = -2;		//-2=已删除
+	GoodsStatus_stopped = -1;		//-1=已停用
+	GoodsStatus_normal = 1;			// 1=正常;
+}
+
+//商品物件状态  -2=已删除  -1=已停用   1=正常  2=预分配 3=已使用
+enum GoodsItemStatusEnum {
+	GoodsItemStatus_reserve = 0;		//保留
+	GoodsItemStatus_deleted = -2;		//-2=已删除
+	GoodsItemStatus_stopped = -1;		//-1=已停用
+	GoodsItemStatus_normal = 1;			// 1=正常
+	GoodsItemStatus_predistribute = 2;	// 2=预分配
+	GoodsItemStatus_used = 3;			// 3=已使用
+}
+
+// 业务类型  1=被活动占用
+enum BizTypeEnum {
+	BizType_reserve = 0;		//保留
+	BizType_act = 1;			//1=被活动占用
+}
+

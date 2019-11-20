@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "ActCommonEnum.proto";
+import "SCommonDomain.proto";
+import "SActDomain.proto";
+
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+service SActWhList {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.act_srv";
+    option (poet.ex_service_rpc_project) = "common.actbase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 活动--黑白名单--运营后台--查询某个活动的黑白名单列表分页
+    rpc ListActWhList(ListActWhListReq) returns(ListActWhListResp){}
+
+    // 活动--黑白名单--运营后台--查询某个活动的黑白名单总数
+    rpc CountActWhList(CountActWhListReq) returns(CountActWhListResp){}
+
+    // 活动--黑白名单--运营后台--添加某个活动的黑白名单
+    rpc AddActWhList(AddActWhListReq) returns(AddActWhListResp){}
+
+    // 活动--黑白名单--运营后台--批量删除某个活动的黑白名单
+    rpc DeleteActWhList(DeleteActWhListReq) returns(DeleteActWhListResp){}
+
+    // 活动--黑白名单--运营后台--查询某个活动某个用户是否是黑白名单
+    rpc GetActWhListByUid(GetActWhListByUidReq) returns(GetActWhListByUidResp){}
+}
+
+
+message GetActWhListByUidReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    int64 uid = 3;
+}
+
+message GetActWhListByUidResp {
+    google.protobuf.Any head = 1;
+    ja.common.act.enums.ActWhListTypeEnum whListType = 2;
+}
+
+message DeleteActWhListReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    repeated int64 uid = 3;
+    ja.common.act.enums.ActWhListTypeEnum whListType = 4;
+    int64 operUid = 5;
+}
+
+message DeleteActWhListResp {
+    google.protobuf.Any head = 1;
+    CommonLongResultBo info = 2;
+}
+
+message AddActWhListReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    int64 uid = 3;
+    ja.common.act.enums.ActWhListTypeEnum actWhListType = 4;
+    int64 operUid = 5;
+}
+
+message AddActWhListResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+message CountActWhListReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    ja.common.act.enums.ActWhListTypeEnum actWhListType = 3;
+}
+
+message CountActWhListResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+message ListActWhListReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    ja.common.act.enums.ActWhListTypeEnum actWhListType = 3;
+    int32 offset = 4;
+    int32 size = 5;
+}
+
+message ListActWhListResp {
+    google.protobuf.Any head = 1;
+    repeated ActWhListBo infoList = 2;
+}
+
+
+
+

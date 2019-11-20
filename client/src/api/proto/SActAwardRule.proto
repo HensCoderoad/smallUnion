@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "SCommonDomain.proto";
+import "SActDomain.proto";
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+service SActAwardRule {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.act_srv";
+    option (poet.ex_service_rpc_project) = "common.actbase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 活动--奖品规则--运营后台--添加活动的奖品规则
+    rpc AddAwardRule(AddAwardRuleReq) returns(AddAwardRuleResp){}
+
+    // 活动--奖品规则--运营后台--修改活动的奖品规则
+    rpc UpdateAwardRule(UpdateAwardRuleReq) returns(UpdateAwardRuleResp){}
+
+    // 活动--奖品规则--运营后台--删除活动的奖品规则
+    rpc DeleteAwardRule(DeleteAwardRuleReq) returns(DeleteAwardRuleResp){}
+
+    // 活动--奖品规则--运营后台--查看活动的奖品规则
+    rpc GetAwardRule(GetAwardRuleReq) returns(GetAwardRuleResp){}
+
+    // 活动--奖品规则--运营后台--查询活动的奖品规则列表
+    rpc ListAwardRule(ListAwardRuleReq) returns(ListAwardRuleResp){}
+}
+
+
+message ListAwardRuleReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+}
+
+message ListAwardRuleResp {
+    google.protobuf.Any head = 1;
+    repeated AwardRuleBo infoList = 2;
+}
+
+message GetAwardRuleReq {
+    google.protobuf.Any head = 1;
+    int64 ruleId = 2;
+}
+
+message GetAwardRuleResp {
+    google.protobuf.Any head = 1;
+    AwardRuleBo info = 2;
+}
+
+
+message UpdateAwardRuleReq {
+    google.protobuf.Any head = 1;
+    int64 operUid = 2;
+    AwardRuleBo info = 3;
+}
+
+message UpdateAwardRuleResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+message AddAwardRuleReq {
+    google.protobuf.Any head = 1;
+    int64 operUid = 2;
+    AwardRuleBo info = 3;
+}
+
+message AddAwardRuleResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+message DeleteAwardRuleReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    repeated int64 ruleId = 3;
+    int64 operUid = 4;
+}
+
+message DeleteAwardRuleResp {
+    google.protobuf.Any head = 1;
+    CommonLongResultBo info = 2;
+}
+
+
+
+

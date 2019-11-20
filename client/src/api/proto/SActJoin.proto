@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "ActCommonEnum.proto";
+import "SActDomain.proto";
+
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+service SActJoin {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.act_srv";
+    option (poet.ex_service_rpc_project) = "common.actbase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 活动--活动参与者--运营后台--查询某个活动的参与者列表分页
+    rpc ListActJoin(ListActJoinReq) returns(ListActJoinResp){}
+
+    //活动--活动参与者--运营后台/小程序--查询某个活动的参与者总个数
+    rpc CountActJoin(CountActJoinReq) returns(CountActJoinResp){}
+
+    // 活动--活动参与者--小程序--添加某个活动的参与者(不需对外提供接口，在模块内部处理这个逻辑)
+    rpc AddActJoin(AddActJoinReq) returns(AddActJoinResp){}
+
+    // 活动--活动参与者--小程序--更新某个活动的参与者的点赞数/或者取消点赞
+    rpc UpdateActJoinLikeCount(UpdateActJoinLikeCountReq) returns(UpdateActJoinLikeCountResp){}
+
+    // 活动--活动参与者--小程序--更新某个活动的参与者的发布的活动作品数
+    rpc UpdateActJoinVideoCount(UpdateActJoinVideoCountReq) returns(UpdateActJoinVideoCountResp){}
+}
+
+
+message UpdateActJoinVideoCountReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    int64 uid = 3;
+    ja.common.act.enums.ActNumOperEnum actNumOper = 4;
+}
+
+message UpdateActJoinVideoCountResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+message UpdateActJoinLikeCountReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    int64 uid = 3;
+    ja.common.act.enums.ActNumOperEnum actNumOper = 4;
+}
+
+message UpdateActJoinLikeCountResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+message AddActJoinReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    int64 uid = 3;
+}
+
+message AddActJoinResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+message CountActJoinReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+}
+
+message CountActJoinResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+message ListActJoinReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    int32 offset = 3;
+    int32 size = 4;
+}
+
+message ListActJoinResp {
+    google.protobuf.Any head = 1;
+    repeated ActJoinBo infoList = 2;
+}
+

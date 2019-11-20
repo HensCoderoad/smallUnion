@@ -1,0 +1,202 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "ActCommonEnum.proto";
+import "SCommonDomain.proto";
+import "SActDomain.proto";
+
+
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+service SAct {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.act_srv";
+    option (poet.ex_service_rpc_project) = "common.actbase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 活动--运营后台--新增
+    rpc AddAct(AddActReq) returns(AddActResp){}
+
+    //活动--运营后台--修改
+    rpc UpdateAct(UpdateActReq) returns(UpdateActResp){}
+
+    //活动--查看详情
+    rpc GetAct(GetActReq) returns(GetActResp){}
+
+    //活动--查看活动状态
+    rpc GetActStatus(GetActStatusReq) returns(GetActStatusResp){}
+
+    //活动--运营后台--删除
+    rpc DeleteAct(DeleteActReq) returns(DeleteActResp){}
+
+    //活动--运营后台--查询列表
+    rpc ListAct(ListActReq) returns(ListActResp){}
+
+    //活动--运营后台--查询总数
+    rpc CountAct(CountActReq) returns(CountActResp){}
+
+    //活动--运营后台--批量调整活动状态
+    rpc BatchChangeActStatus(BatchChangeActStatusReq) returns(BatchChangeActStatusResp){}
+
+    ////////////////////////////////////////////////////
+    //活动--小程序--查询当前正在生效中的活动列表（兼容后面同时有多个活动的场景）
+    rpc ListActEffective(ListActEffectiveReq) returns(ListActEffectiveResp){}
+
+    //活动--小程序--查询当前正在生效中的活动总个数
+    rpc CountActEffective(CountActEffectiveReq) returns(CountActEffectiveResp){}
+
+    //小程序端--当前用户未中奖时，获取其它活动
+    rpc ListOtherAct(ListOtherActReq) returns(ListOtherActResp){}
+
+    //小程序端--某个用户参与的活动列表
+    rpc ListActByUid(ListActByUidReq) returns(ListActByUidResp){}
+}
+
+
+message ListActByUidReq {
+    google.protobuf.Any head = 1;
+    int64 uid = 2;
+    int32 offset = 3;
+    int32 size = 4;
+}
+
+message ListActByUidResp {
+    google.protobuf.Any head = 1;
+    repeated ActBo infoList = 2;
+}
+
+
+message ListOtherActReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    ja.common.act.enums.ActStatusEnum actStatus = 3;
+    int32 offset = 4;
+    int32 size = 5;
+}
+
+message ListOtherActResp {
+    google.protobuf.Any head = 1;
+    repeated ActBo infoList = 2;
+}
+
+message CountActEffectiveReq {
+    google.protobuf.Any head = 1;
+}
+
+message CountActEffectiveResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+message ListActEffectiveReq {
+    google.protobuf.Any head = 1;
+}
+
+message ListActEffectiveResp {
+    google.protobuf.Any head = 1;
+    repeated ActBo infoList = 2;
+}
+
+
+
+message BatchChangeActStatusReq {
+    google.protobuf.Any head = 1;
+    int64 operUid = 2;
+    repeated int64 actId = 3;
+    ja.common.act.enums.ActStatusEnum actStatus = 4;
+}
+
+message BatchChangeActStatusResp {
+    google.protobuf.Any head = 1;
+    CommonLongResultBo info = 2;
+}
+
+
+message CountActReq {
+    google.protobuf.Any head = 1;
+    string title = 2;
+    ja.common.act.enums.ActStatusEnum actStatus = 3;
+    int32 beginTime = 4;
+    int32 endTime = 5;
+
+}
+
+message CountActResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+message ListActReq {
+    google.protobuf.Any head = 1;
+    string title = 2;
+    ja.common.act.enums.ActStatusEnum actStatus = 3;
+    int32 beginTime = 4;
+    int32 endTime = 5;
+    int32 offset = 6;
+    int32 size = 7;
+}
+
+message ListActResp {
+    google.protobuf.Any head = 1;
+    repeated ActBo infoList = 2;
+}
+
+message DeleteActReq {
+    google.protobuf.Any head = 1;
+    int64 operUid = 2;
+    repeated int64 actId = 3;
+}
+
+message DeleteActResp {
+    google.protobuf.Any head = 1;
+    CommonLongResultBo info = 2;
+}
+
+
+message GetActReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+}
+
+message GetActResp {
+    google.protobuf.Any head = 1;
+    ActBo info = 2;
+}
+
+
+message GetActStatusReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+}
+
+//注：活动有可能不存在
+message GetActStatusResp {
+    google.protobuf.Any head = 1;
+    ja.common.act.enums.ActStatusEnum actStatus = 2;
+}
+
+message UpdateActReq {
+    google.protobuf.Any head = 1;
+    ActBo info = 2;
+}
+
+message UpdateActResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+
+message AddActReq {
+    google.protobuf.Any head = 1;
+    ActBo info = 2;
+}
+
+message AddActResp {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+}
+

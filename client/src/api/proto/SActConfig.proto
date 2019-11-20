@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "SActDomain.proto";
+
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+service SActConfig {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.act_srv";
+    option (poet.ex_service_rpc_project) = "common.actbase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 活动--配置--运营后台--设置配置
+    rpc SetActConfig(SetActConfigReq) returns(SetActConfigResp){}
+
+    // 活动--配置--运营后台--查询配置
+    rpc GetActConfig(GetActConfigReq) returns(GetActConfigResp){}
+
+}
+
+
+message SetActConfigReq {
+    google.protobuf.Any head = 1;
+    ActConfigBo info = 2;
+}
+
+message SetActConfigResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+
+message GetActConfigReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;         //活动id
+}
+
+message GetActConfigResp {
+    google.protobuf.Any head = 1;
+    ActConfigBo info = 2;
+}
+
+
+

@@ -1,0 +1,138 @@
+syntax = "proto3";
+
+import "WorksCommonEnum.proto";
+
+package ja.common.works.domain.audit;
+
+option java_multiple_files = false;
+
+enum SearchAuditStatus{
+    SEARCH_WAITING_AUDIT = 0;              // 待审核
+    SEARCH_PASS_OK = 1;                    // 已通过,但不标记
+    SEARCH_NOT_PASS = 2;                   // 不通过
+    SEARCH_PASS_AND_MARK = 3;              // 已通过,但标记
+    SEARCH_PASS_ALL = 4;                   // 已通过(不管是否标记)
+    SEARCH_NOT_PASS_AND_MARK = 5;          // c类已下架
+    SEARCH_ALL = 6;                        // 全部
+}
+
+enum AuditOperation{
+    AUDIT_PASS = 0;                       // 通过
+    AUDIT_PASS_AND_MARK = 1;              // 通过且标记
+    AUDIT_PASS_UN_MARK = 2;               // 通过但取消标记
+    AUDIT_OFF_LINE = 3;                   // 下架(不通过,需注明原因)
+    AUDIT_REPORT = 4;                     // 举报(暂时不处理)
+    AUDIT_RECOVER_ONLINE = 5;             // 恢复上架
+}
+
+//作品评级相关   0=待评级   1=S级  2=A级  3=B级 4=C类  5=评级已完成 6=所有
+enum SearchGradeType{
+    SEARCH_GRADE_WAITING = 0;             // 待评级
+    SEARCH_GRADE_S = 1;                   // A级
+    SEARCH_GRADE_A = 2;                   // B级
+    SEARCH_GRADE_B = 3;                   // S级
+    SEARCH_TYPE_C = 4;                   // C类
+    SEARCH_GRADE_FINISHED = 5;            // 已完成
+    SEARCH_GRADE_ALL = 6;                 // 所有(目前只包括被推荐的作品)
+    SEARCH_GRADE_D = 7;                 // D级
+}
+
+enum GradeType{
+    GRADE_WAITING = 0;       // 0=待评级
+    GRADE_A = 1;             // 1=A级
+    GRADE_B = 2;             // 2=B级
+    GRADE_S = 3;             // 3=S级
+    GRADE_D = 4;             // 4=D级
+}
+
+message VideoAuditBo{
+    string vid = 1;				        // 作品id
+    int64 aid = 2;                     //所属认证主体aid
+    string author_name = 3;	    	   // 认证主体的名称
+    string video_title = 4;           //作品标题
+    ja.common.works.enums.VideoType video_type = 5;	       // 作品类型
+    ja.common.works.enums.VideoState video_state = 6;        //作品状态   0=正常可见，1=不可见(已下架)
+    string video_url = 7;		       // 作品的音视频地址
+    string cover_url = 8;		       // 作品的封面地址
+    int32 create_time = 9;           //创建时间
+    int32 update_time = 10;           //修改时间(通常指同一个主体下的多人编辑同一作品时的编辑时间)
+    int64 publish_time = 11;		   // 真正发布时间
+    repeated int64 category = 12;     //作品的分类id集合
+    ja.common.works.enums.VideoAuditState audit_status = 13; //作品审核状态  0=待审核  1=已通过  2=不通过
+    int64 audit_time = 14;			   // 审核时间(对应上架/下架时间)
+    int64 audit_uid = 15;             //审核人uid(运营后台的自身的用户id,不是音盟用户uid)
+    string audit_mark = 16;           //审核说明(不通过时、下架时必填)
+    string mark_type = 17;            //标记分类，目前暂时只有C类标记
+    int64 uid = 18;                   //作品发布用户uid
+}
+
+//评级基准值配置
+message WorkGradeConfBo {
+    GradeType gradeType = 1;             //S级、A级、B级、D级
+    int32 gradeValue = 2;               //各评级的基准值,比如 1000,2000
+    int64 operUid  = 3;                 //运营人uid(运营后台的自身的用户id,不是音盟用户uid)
+    int32 createTime = 4;               //创建时间,单位：秒
+    int32 updateTime = 5;               //修改时间,单位：秒
+}
+
+message VideoGradeBaseBo {
+    string vid = 1;                     //作品vid
+    int64 aid = 2;                      //认证号aid
+    GradeType gradeType = 3;             //S级、A级、B级
+    int32 gradeValue = 4;               //评级的值,比如 1000,2000(初开始来源评级所对应的值，但可自定义修改)
+    int32 recommendMinLimit = 5;        //推荐最小暴光基数；当作品曝光量超过这个就是热门作品（目前是设置的B级所对应的暴光量） -1:不调整
+    int32 recommendStatus = 6;          //作品是否已上推荐  1=上了推荐  2=下了推荐
+    int32 pushTotal = 7;                //作品当前的推送量，从推荐服务同步过来的，会有延时
+    int64 operUid  = 8;                 //运营人uid(运营后台的自身的用户id,不是音盟用户uid)
+    int32 createTime = 9;               //创建时间,单位：秒
+    int32 updateTime = 10;               //修改时间,单位：秒
+}
+
+message VideoRatioBo {
+    string vid = 1;                     //作品vid
+    int64 aid = 2;                      //认证号aid
+    int64 currentExposure = 10;         //当前曝光量(来自大数据es)
+    string converRatio = 11;            //转化率(来自大数据es)
+    string completeRatio = 12;          //完播转换率(来自大数据es)
+}
+
+message VideoGradeBo{
+    VideoGradeBaseBo gradeBaseBo = 1;
+    VideoRatioBo ratioBo = 2;
+}
+
+////作品审核二期接口####################################
+enum AuditSwitch{
+    AUDIT_SWITCH_VIDEO = 0;               // 作品审核
+    AUDIT_SWITCH_AUTHOR = 1;              // 认证号审核
+}
+
+enum AuditAuthorListType{
+    AUDIT_AUTHOR_WHITE = 0;               // 认证号审核白名单
+    AUDIT_AUTHOR_BLACK = 1;              // 认证号审核黑名单
+    AUDIT_AUTHOR_NORMAL = 2;             // 认证号既不在白名单，也不在黑名单
+    AUDIT_AUTHOR_ALL = 3;                // 所有
+}
+
+message AuditSwitchBo{
+    AuditSwitch auditSwitch = 1;	   //开关的名称,可以为空，默认是video_audit
+    int32 switch_flag = 2;             //审核开关类型 0=先发后审  1=先审后发
+    int64 oper_uid = 3;                //操作者id
+    int32 create_time = 4;           //创建时间
+    int32 update_time = 5;           //修改时间
+    string tips = 6;                 //审核开关的方案描述
+}
+
+message BatchAuthorResult{
+    int32 success_num = 1;          // 成功数量
+    int32 fail_num = 2;             // 失败数量
+    repeated int64 fail_aid = 3; // 失败的aid列表
+}
+
+message AuthorWhiteBlackBo {
+    int64 aid = 1;                      //认证号aid
+    string author_name = 2;             //认证号名称
+    AuditAuthorListType AuditAuthorListType = 3;        //认证号白黑名单类型  0=白名单  1=黑名单
+    int64 oper_uid  = 4;                //操作人id
+    int32 create_time = 5;				//创建时间,单位：秒
+}

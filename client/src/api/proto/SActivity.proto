@@ -1,0 +1,549 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "SActivityDomain.proto";
+import "SCommonDomain.proto";
+
+
+package ja.common.activity;
+
+option java_multiple_files = false;
+
+service SActivity {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.activity_srv";
+    option (poet.ex_service_rpc_project) = "common.activitybase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 小程序端--生成某个公众号的活动码  ok
+    rpc GenerateActivityCode(GenerateActivityCodeReq) returns(GenerateActivityCodeResp){}
+
+    // 获取某个认证号的活动码相关信息  ok
+    rpc GetActivityCode(GetActivityCodeReq) returns(GetActivityCodeResp){}
+
+    // 运营后台--启用/停用活动码 ok
+    rpc ChangeActivityCodeState(ChangeActivityCodeStateReq) returns(ChangeActivityCodeStateResp){}
+
+    // 运营后台--通过推荐人aid,启用/停用活动码 ok
+    rpc ChangeActivityCodeStateByRecommendAid(ChangeActivityCodeStateByRecommendAidReq) returns(ChangeActivityCodeStateByRecommendAidResp){}
+
+    // 运营后台--批量获取活动码的信息 ok
+    rpc BatchGetActivityCode(BatchGetActivityCodeReq) returns(BatchGetActivityCodeResp){}
+
+    // 小程序端--获取分享文本及图片  ok
+    rpc GetShareText(GetShareTextReq) returns(GetShareTextResp){}
+
+    /////////////////////////////////////////////////////////////////////////
+    //运营后台--查询认证号申请总数  ok
+    rpc CountApplyAuthorByStatus(CountApplyAuthorByStatusReq) returns (CountApplyAuthorByStatusResp){};
+
+    //运营后台--查询认证号申请列表  ok
+    rpc ListApplyAuthorByStatus(ListApplyAuthorByStatusReq) returns (ListApplyAuthorByStatusResp){};
+
+    //运营后台--审核认证号申请  ok
+    rpc AuditApplyAuthorById(AuditApplyAuthorByIdReq) returns (AuditApplyAuthorByIdResp){};
+
+    //运营后台--查看单个认证号申请详情  ok
+    rpc GetApplyAuthorById(GetApplyAuthorByIdReq) returns (GetApplyAuthorByIdResp){};
+
+    //运营后台--封锁/解封单个用户的认证号申请  ok
+    rpc ChangeApplyUserStatus(ChangeApplyUserStatusReq) returns (ChangeApplyUserStatusResp){};
+
+    //运营后台--批量获取用户的认证号申请状态  ok
+    rpc BatchGetUserApplyStatus(BatchGetUserApplyStatusReq) returns (BatchGetUserApplyStatusResp){};
+
+    //运营后台--批量获取邀请码状态  ok
+    rpc BatchGetShareCodeStatus(BatchGetShareCodeStatusReq) returns (BatchGetShareCodeStatusResp){};
+
+    //运营后台--根据推荐人aid-批量获取邀请码状态  ok
+    rpc BatchGetShareCodeStatusByRecommendAids(BatchGetShareCodeStatusByRecommendAidsReq) returns (BatchGetShareCodeStatusByRecommendAidsResp){};
+
+    //运营后台--发文管理--查询指定时间段内的发文认证号统计信息列表  OK
+    rpc ListAuthorForRewardStat(ListAuthorForRewardStatReq) returns (ListAuthorForRewardStatResp){};
+
+    //运营后台--发文管理--查询指定时间段内的发文认证号个数  OK
+    rpc CountAuthorForRewardStat(CountAuthorForRewardStatReq) returns (CountAuthorForRewardStatResp){};
+
+    //运营后台--发文管理--查询某个认证号的7天结算周期内的发文列表  OK
+    rpc ListVideoForRewardByApplyAid(ListVideoForRewardByApplyAidReq) returns (ListVideoForRewardByApplyAidResp){};
+
+    //运营后台--发文管理--上调/下周某个认证号的首次发文奖励金额
+    rpc ChangeFirstVideoForRewardByAid(ChangeFirstVideoForRewardByAidReq) returns (ChangeFirstVideoForRewardByAidResp){};
+
+    //运营后台--推荐人认证号白黑名单--新增
+    rpc AddApplyAuthorList(AddApplyAuthorListReq) returns (AddApplyAuthorListResp){};
+
+    //运营后台--推荐人认证号白黑名单--修改
+    rpc UpdateApplyAuthorList(UpdateApplyAuthorListReq) returns (UpdateApplyAuthorListResp){};
+
+    //运营后台--推荐人认证号白黑名单--查询
+    rpc ListApplyAuthorList(ListApplyAuthorListReq) returns (ListApplyAuthorListResp){};
+
+    //运营后台--推荐人认证号白黑名单--查询总数
+    rpc CountApplyAuthorList(CountApplyAuthorListReq) returns (CountApplyAuthorListResp){};
+
+    //运营后台--推荐人认证号白黑名单--查看
+    rpc GetApplyAuthorList(GetApplyAuthorListReq) returns (GetApplyAuthorListResp){};
+
+    //运营后台--推荐人认证号白黑名单--删除
+    rpc DeleteApplyAuthorList(DeleteApplyAuthorListReq) returns (DeleteApplyAuthorListResp){};
+
+    /////////////////////////////////////////////////////////////
+    //小程序端--提交认证号申请信息
+    rpc ApplyAuthor(ApplyAuthorReq) returns (ApplyAuthorResp){};
+
+    //小程序端--查询某个认证号所有奖励列表      OK
+    rpc ListRewardDetailByRecommendAid(ListRewardDetailByRecommendAidReq) returns (ListRewardDetailByRecommendAidResp){};
+
+    //小程序端--查询某个认证号所有奖励总数   OK
+    rpc CountRewardDetailByRecommendAid(CountRewardDetailByRecommendAidReq) returns (CountRewardDetailByRecommendAidResp){};
+
+    //小程序端/web后台--查询某个认证号的所有奖励总额    OK
+    rpc GetTotalRewardByRecommendAid(GetTotalRewardByRecommendAidReq) returns (GetTotalRewardByRecommendAidResp){};
+
+    //web后台--小程序端/web后台--查询某个认证号推荐入驻的认证号数量
+    rpc GetApplyAuthorCountByRecommendAid(GetApplyAuthorCountByRecommendAidReq) returns (GetApplyAuthorCountByRecommendAidResp){};
+
+    // web后台--获取符合条件的入驻认证号数量
+    rpc GetApplyAuthorCount(GetApplyAuthorCountReq) returns(GetApplyAuthorCountResp){}
+
+    //web后台--查询某个推荐人认证号---推荐的所有认证号列表(分页) OK
+    rpc ListAuthorByRecommendAid(ListAuthorByRecommendAidReq) returns (ListAuthorByRecommendAidResp){};
+
+    //web后台--查询某个推荐人认证号---推荐的所有认证号总数
+    rpc CountAuthorByRecommendAid(CountAuthorByRecommendAidReq) returns (CountAuthorByRecommendAidResp){};
+
+    // 小程序端--查询用户申请的状态
+    rpc GetApplyStatusByUid(GetApplyStatusByUidReq) returns(GetApplyStatusByUidResp){}
+
+}
+
+
+message AddApplyAuthorListReq {
+    google.protobuf.Any head = 1;
+    ActApplyListBo info = 2;
+}
+
+message AddApplyAuthorListResp {
+    google.protobuf.Any head = 1;
+}
+
+message UpdateApplyAuthorListReq {
+    google.protobuf.Any head = 1;
+    int64 operUid = 2;
+    int64 aid = 3;
+    ActListTypeEnum actListType = 4;	//黑白名单类型 -1=已禁用白名单 1=白名单  2=黑名单
+}
+
+message UpdateApplyAuthorListResp {
+    google.protobuf.Any head = 1;
+}
+
+message DeleteApplyAuthorListReq {
+    google.protobuf.Any head = 1;
+    repeated int64 aid = 2;
+}
+
+message DeleteApplyAuthorListResp {
+    google.protobuf.Any head = 1;
+    CommonLongResultBo info = 2;
+}
+
+message GetApplyAuthorListReq {
+    google.protobuf.Any head = 1;
+    int64 uid = 2;
+    int64 aid = 3;
+}
+
+message GetApplyAuthorListResp {
+    google.protobuf.Any head = 1;
+    ActApplyListBo info = 2;
+}
+
+message CountApplyAuthorListReq {
+    google.protobuf.Any head = 1;
+    int64 aid = 2;
+    int64 uid = 3;
+    int64 operUid  = 4;                                 //操作人id
+    int32 beginTime = 5;					            //查询开始时间,单位：秒
+    int32 endTime = 6;				                    //查询结束时间,单位：秒
+}
+
+message CountApplyAuthorListResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+message ListApplyAuthorListReq {
+    google.protobuf.Any head = 1;
+    int64 aid = 2;
+    int64 uid = 3;
+    int64 operUid  = 4;                                 //操作人id
+    int32 beginTime = 5;					            //查询开始时间,单位：秒
+    int32 endTime = 6;				                    //查询结束时间,单位：秒
+    int64 offset = 7;									//记录起始位置,从0开始
+    int32 count = 8;								    // 一次获取的记录数量
+}
+
+message ListApplyAuthorListResp {
+    google.protobuf.Any head = 1;
+    repeated ActApplyListInfoBo info = 2;
+}
+
+///////////////////////////////////////////////////
+//小程序端--查询用户申请的状态
+message GetApplyStatusByUidReq {
+    google.protobuf.Any head = 1;
+    int64 uid = 2;
+}
+
+message GetApplyStatusByUidResp {
+    google.protobuf.Any head = 1;
+    int32 status = 2;    // 1=待审核  2=通过  3=不通过  4=用户已有认证号  5=没认证号，也没提交过申请
+}
+
+//运营后台--批量获取用户的认证号申请状态
+message BatchGetUserApplyStatusReq {
+    google.protobuf.Any head = 1;
+    repeated int64 uid = 2;				            // 推荐人的用户uid
+}
+
+message BatchGetUserApplyStatusResp {
+    google.protobuf.Any head = 1;
+    map<int64, ApplyUserActionEnum> info = 2;
+}
+
+message ApplyAuthorReq {
+    google.protobuf.Any head = 1;
+    string checkNum = 2;				            // 邀请码
+    string verifyCode = 3;                         // 手机验证码
+    ApplyAuthorBo applyAuthorBo = 4;                //申请信息
+}
+
+message ApplyAuthorResp {
+    google.protobuf.Any head = 1;
+}
+
+//运营后台--查询认证号申请总数
+message CountApplyAuthorByStatusReq {
+    google.protobuf.Any head = 1;
+    string keyword = 2;                                 //查询关键字
+    ApplySearchEnum applySearch = 3;                    //1=推荐人的  2=被推荐人的
+    ApplyAuthorStatusEnum applyAuthorStatus = 4;        //审核状态  1=待审核  2=通过  3=不通过
+    int64 operUid  = 5;                                 //操作人id
+    int32 beginTime = 6;					            //查询开始时间,单位：秒
+    int32 endTime = 7;				                    //查询结束时间,单位：秒
+}
+
+message CountApplyAuthorByStatusResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2; //总数
+}
+
+//运营后台--查询认证号申请列表
+message ListApplyAuthorByStatusReq {
+    google.protobuf.Any head = 1;
+    string keyword = 2;                                 //查询关键字
+    ApplySearchEnum applySearch = 3;                    //1=推荐人的  2=被推荐人的
+    ApplyAuthorStatusEnum applyAuthorStatus = 4;        //审核状态  1=待审核  2=通过  3=不通过
+    int64 operUid  = 5;                                 //操作人id
+    int32 beginTime = 6;					            //查询开始时间,单位：秒
+    int32 endTime = 7;				                    //查询结束时间,单位：秒
+    int64 offset = 8;									//记录起始位置,从0开始
+    int32 count = 9;								    // 一次获取的记录数量
+}
+
+message ListApplyAuthorByStatusResp {
+    google.protobuf.Any head = 1;
+    repeated ApplyAuthorBo infos = 2; 			//认证号申请信息列表
+}
+
+//运营后台--审核认证号申请
+message AuditApplyAuthorByIdReq {
+    google.protobuf.Any head = 1;
+    int64 applyId = 2;							//申请记录id
+    string authorName = 3;                     //认证号名称
+    string note = 4;                           //认证号简介
+    string verifyCode = 5;                     //认证码
+    ApplyAuthorStatusEnum applyAuthorStatus = 6;	//审核状态
+    int64 operUid	= 7;						    //操作者id
+    string mark = 8;                               //审核原因说明
+}
+
+message AuditApplyAuthorByIdResp {
+    google.protobuf.Any head = 1;
+    int64 aid = 2;						//申请成功的认证号aid
+}
+
+//运营后台--查看单个认证号申请详情
+message GetApplyAuthorByIdReq {
+    google.protobuf.Any head = 1;
+    int64 applyId = 2;                    //认证号申请记录id
+}
+
+message GetApplyAuthorByIdResp {
+    google.protobuf.Any head = 1;
+    ApplyAuthorBo info = 2;                     //认证号申请信息
+}
+
+
+//运营后台--封锁/解封单个用户的认证号申请
+message ChangeApplyUserStatusReq {
+    google.protobuf.Any head = 1;
+    ApplyUserActionEnum applyUserAction = 2;     //用户的认证号申请状态    1=封锁  2=解封
+    int64 uid = 3;								//申请用户uid
+    int64 operUid = 4;							//操作者id
+}
+
+message ChangeApplyUserStatusResp {
+    google.protobuf.Any head = 1;
+}
+
+//运营后台--审核单个的认证号申请
+message AuditApplyAuthorReq {
+    google.protobuf.Any head = 1;
+    ApplyAuthorStatusEnum applyAuthorStatus = 2;     //审核状态  1=待审核  2=通过  3=不通过
+    int64 applyId = 3;								//申请记录id
+    int64 operUid = 4;								//操作者id
+}
+
+message AuditApplyAuthorResp {
+    google.protobuf.Any head = 1;
+}
+
+
+//运营后台--发文管理--查询指定时间段内的发文认证号统计信息列表
+message ListAuthorForRewardStatReq {
+    google.protobuf.Any head = 1;
+    string authorName = 2;                     //审核通过的认证号名称,全名
+    int64 aid = 3;                             //审核通过的认证号aid
+    int32 beginTime = 4;					   //查询开始时间,单位：秒
+    int32 endTime = 5;				           //查询结束时间,单位：秒
+    int64 offset = 6;							//记录起始位置,从0开始
+    int32 count = 7;						    // 一次获取的记录数量
+}
+
+message ListAuthorForRewardStatResp {
+    google.protobuf.Any head = 1;
+    repeated AuthorSevenDaysVideoRewardBo infos = 2;		//首次发文后，7天内的累计发文列表
+}
+
+//运营后台--发文管理--查询指定时间段内的发文认证号个数
+message CountAuthorForRewardStatReq {
+    google.protobuf.Any head = 1;
+    string authorName = 2;                     //审核通过的认证号名称,全名
+    int64 aid = 3;                             //审核通过的认证号aid
+    int32 beginTime = 4;					   //查询开始时间,单位：秒
+    int32 endTime = 5;				           //查询结束时间,单位：秒
+}
+
+message CountAuthorForRewardStatResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;				//满足条件下的认证号的总个数
+}
+
+//运营后台--发文管理--查询某个认证号的7天结算周期内的发文列表
+message ListVideoForRewardByApplyAidReq {
+    google.protobuf.Any head = 1;
+    int64 aid = 2;                             //审核通过的认证号aid
+}
+
+message ListVideoForRewardByApplyAidResp {
+    google.protobuf.Any head = 1;
+    AuthorSevenDaysVideoRewardBo info = 2;				// 认证号的7天发文奖励的相关信息
+    AuthorVideoRewardBo firstPubReward = 3;             // 认证号首次发文奖励的相关信息
+}
+
+//运营后台--发文管理--上调/下周某个认证号的首次发文奖励金额
+message ChangeFirstVideoForRewardByAidReq {
+    google.protobuf.Any head = 1;
+    int64 aid = 2;                             //首次发文的认证号aid
+    int32 amout = 3;							 //金额
+    AuthorRewardActionEnum authorRewardAction = 4; //对认证号的奖励金额调整动作    1=上调  2=下调
+    int64 operUid = 5;							//操作者id
+}
+
+message ChangeFirstVideoForRewardByAidResp {
+    google.protobuf.Any head = 1;
+}
+
+//小程序端--查询某个认证号所有奖励列表
+message ListRewardDetailByRecommendAidReq {
+    google.protobuf.Any head = 1;
+    int64 recommendAid = 2;                     //推荐人认证号aid
+    int64 offset = 3;									//记录起始位置,从0开始
+    int32 count = 4;								    // 一次获取的记录数量
+}
+
+message ListRewardDetailByRecommendAidResp {
+    google.protobuf.Any head = 1;
+    repeated TaskRewardBo infos = 2;			//奖励明细列表
+    int64 next = 3;
+}
+
+//小程序端--查询某个认证号所有奖励记录总数
+message CountRewardDetailByRecommendAidReq {
+    google.protobuf.Any head = 1;
+    int64 recommendAid = 2;                     //推荐人认证号aid
+}
+
+message CountRewardDetailByRecommendAidResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;							//奖励总数
+}
+
+
+//小程序端/web后台--查询某个认证号的所有奖励总额
+message GetTotalRewardByRecommendAidReq {
+    google.protobuf.Any head = 1;
+    int64 recommendAid = 2;                     //推荐人认证号aid
+}
+
+message GetTotalRewardByRecommendAidResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;							//奖励总数
+}
+
+//小程序端/web后台--查询某个认证号推荐入驻的认证号相关数量
+message GetApplyAuthorCountByRecommendAidReq{
+    google.protobuf.Any head = 1;
+    int64 recommendAid = 2;                     //推荐人认证号aid
+}
+
+message GetApplyAuthorCountByRecommendAidResp{
+    google.protobuf.Any head = 1;
+    int32 total = 2;                            // 总申请数量
+    int32 wait = 3;                             // 等待审批数量
+    int32 pass = 4;                             // 已通过数量
+    int32 refused = 5;                           // 未通过数量
+}
+
+// 获取符合条件的入驻认证号数量
+message GetApplyAuthorCountReq{
+    google.protobuf.Any head = 1;
+    int64 recommendAid = 2;                     //推荐人认证号aid
+    ActTypeEnum actType = 3;                    // 活动类型
+    TaskTypeEnum taskType = 4;                  // 任务类型
+}
+
+message GetApplyAuthorCountResp{
+    google.protobuf.Any head = 1;
+    int32 total = 2;                            // 符合条件的数量
+}
+
+//web后台--查询某个推荐人认证号---推荐的所有认证号列表(分页)
+message ListAuthorByRecommendAidReq {
+    google.protobuf.Any head = 1;
+    int64 recommendAid = 2;                     //推荐人认证号aid
+    int64 offset = 3;									//记录起始位置,从0开始
+    int32 count = 4;								    // 一次获取的记录数量
+}
+
+message ListAuthorByRecommendAidResp {
+    google.protobuf.Any head = 1;
+    repeated AuthorRewardStatBo infos = 2;		//推荐的所有认证号列表
+    int64 next = 3;
+}
+
+//web后台--查询某个推荐人认证号---推荐的所有认证号总数
+message CountAuthorByRecommendAidReq {
+    google.protobuf.Any head = 1;
+    int64 recommendAid = 2;                     //推荐人认证号aid
+}
+
+message CountAuthorByRecommendAidResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;							//认证号总个数
+}
+
+message GenerateActivityCodeReq{
+	google.protobuf.Any head = 1;
+	int64 opuid = 2;
+	int64 aid = 3;
+}
+
+message GenerateActivityCodeResp{
+	google.protobuf.Any head = 1;
+	ActShareBo shareBo = 2;  // 活动码的信息
+}
+
+message GetActivityCodeReq{
+    google.protobuf.Any head = 1;
+    int64 opuid = 2;
+    int64 aid = 3;
+}
+
+message GetActivityCodeResp{
+    google.protobuf.Any head = 1;
+    ActShareBo shareBo = 2;  // 活动码的信息
+}
+
+// 运营后台--启用/停用活动码（商务端。入驻管理。上/下线用户推荐）
+message ChangeActivityCodeStateReq{
+	google.protobuf.Any head = 1;
+    int64 opuid = 2;
+    string code = 3;                            // 活动码
+    ShortCodeStatusEnum state = 4;   // 状态：	2=使用中， 3=已禁用
+}
+
+message ChangeActivityCodeStateResp{
+	google.protobuf.Any head = 1;
+}
+
+// 运营后台--启用/停用活动码（商务端。入驻管理。上/下线用户推荐）
+message ChangeActivityCodeStateByRecommendAidReq{
+    google.protobuf.Any head = 1;
+    int64 opuid = 2;
+    int64 recommendAid = 3;          // 推荐人aid
+    ShortCodeStatusEnum state = 4;   // 状态：	2=使用中， 3=已禁用
+}
+
+message ChangeActivityCodeStateByRecommendAidResp{
+    google.protobuf.Any head = 1;
+}
+
+// 运营后台--批量获取活动码的信息（商务端。入驻管理。上/下线用户推荐）
+message BatchGetActivityCodeReq{
+	google.protobuf.Any head = 1;
+	repeated string code = 2;                   // 活动码
+}
+
+message BatchGetActivityCodeResp{
+	google.protobuf.Any head = 1;
+	map<string, ActShareBo> info = 2;    // 活动码与其数据的map
+}
+
+message BatchGetShareCodeStatusReq{
+    google.protobuf.Any head = 1;
+    repeated string code = 2;                   // 活动码
+}
+
+message BatchGetShareCodeStatusResp{
+    google.protobuf.Any head = 1;
+    map<string, ShortCodeStatusEnum> info = 2;    // 活动码与状态的map
+}
+
+//运营后台--根据推荐人aid-批量获取邀请码状态
+message BatchGetShareCodeStatusByRecommendAidsReq{
+    google.protobuf.Any head = 1;
+    repeated int64 recommendAid = 2;                   // 推荐人aid
+}
+
+message BatchGetShareCodeStatusByRecommendAidsResp{
+    google.protobuf.Any head = 1;
+    map<int64, ShortCodeStatusEnum> info = 2;    // 推荐人aid与状态的map
+}
+
+// 小程序端--获取分享文本及图片
+message GetShareTextReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;                                          // 分享的认证号
+	int64 opuid = 3;                                        // 操作者uid
+	ShareDestEnum  dest = 4;            // 分享的目的地：1=分享到微信好友
+}
+
+message GetShareTextResp{
+	google.protobuf.Any head = 1;
+	ShareTextBo info = 2;
+}

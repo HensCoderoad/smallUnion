@@ -1,0 +1,249 @@
+syntax = "proto3";
+
+package ja.common.activity;
+
+option java_multiple_files = false;
+
+//分享链接状态 status   1=未使用   2=使用中  3=已禁用（即已下线此用户的推荐）
+enum ShortCodeStatusEnum{
+	SHORT_CODE_RESERVED = 0;		//保留，占位用
+	SHORT_CODE_NOT_USED  = 1; 		//1=未使用
+	SHORT_CODE_USING  = 2; 			//2=使用中
+	SHORT_CODE_STOPPED  = 3; 		//3=已禁用（即已下线此用户的推荐）
+
+}
+
+//活动类型 10=推荐分享
+enum ActTypeEnum {
+	ACT_TYPE_RESERVED = 0;				//保留，占位用
+	ACT_TYPE_RECOMMEND_SHARE = 10;		//10=推荐分享
+}
+
+//审核状态  1=待审核  2=通过  3=不通过
+enum ApplyAuthorStatusEnum {
+	APPLY_AUTHOR_RESERVED = 0;		//保留，占位用
+	APPLY_AUTHOR_WAITING = 1;		// 1=待审核
+	APPLY_AUTHOR_PASS = 2;			// 2=通过
+	APPLY_AUTHOR_REFUSED = 3;		// 3=不通过
+
+}
+
+//用户的认证号申请状态    1=封锁  2=解封
+enum ApplyUserActionEnum {
+	APPLY_USER_ACTION_RESERVED = 0;				//保留，占位用
+	APPLY_USER_ACTION_BLOCK = 1;		//1=封锁
+	APPLY_USER_ACTION_UNBLOCK = 2;		//2=解封
+}
+
+
+//对认证号的奖励金额调整动作    1=上调  2=下调
+enum AuthorRewardActionEnum {
+	AUTHOR_REWARD_ACTION_RESERVED = 0;	//保留，占位用
+	AUTHOR_REWARD_ACTION_UP = 1;		//1=上调
+	AUTHOR_REWARD_ACTION_DOWN = 2;		//2=下调
+}
+
+//  任务类型 1000=新人入驻 1001=首次发文  1002=7天累计发文有3篇达标
+enum  TaskTypeEnum {
+	TASK_TYPE_RESERVED = 0;		//保留，占位用
+	TASK_TYPE_NEW_AUTHOR = 1000;	// 1000=新人入驻
+	TASK_TYPE_FIRST_VIDEO = 1001;	// 1001=首次发文
+	TASK_TYPE_SEVEN_DAYS_VIDEO = 1002;	// 1002=7天累计发文有3篇达标
+}
+
+// 奖励领取标志  1=待处理  2=待领取  3=已领取
+enum ReceiveStatusEnum {
+	RECEIVE_STATUS_RESERVED = 0;		//保留，占位用
+	RECEIVE_STATUS_NOT_EFFECTIVE = 1;   // 1=待处理
+	RECEIVE_STATUS_WAITING = 2;			// 2=待领取
+	RECEIVE_STATUS_FINISH = 3;			// 3=已领取
+}
+
+// 分享模板的目的地定义
+enum ShareDestEnum {
+	ShareDest_reserved = 0;         // 占位项
+	ShareDest_wxfriend = 1;         // 分享到微信好友
+}
+
+// 分享模板的状态
+enum ShareTemplateStateEnum{
+	ShareTemplateState_reserved = 0;    // 占位项
+	ShareTemplateState_normal = 1;		// 启用
+	ShareTemplateState_stopped = 2;	    // 停用
+}
+
+//屏蔽/解封 用户的认证号申请   1=屏蔽  2=解封
+enum ApplyAuthorActionEnum{
+	APPLY_AUTHOR_ACTION_RESERVED = 0;		//保留，占位用
+	APPLY_AUTHOR_ACTION_BLOCK  = 1; 		//1=屏蔽
+	APPLY_AUTHOR_ACTION_UNBLOCK  = 2; 		//2=解封
+}
+
+//认证号申请--查询数据类型
+enum ApplySearchEnum {
+	APPLY_SEARCH_RESERVED = 0;				//保留，占位用
+	APPLY_SEARCH_RECOMMEND_AID = 1;			//1=推荐人认证号aid
+	APPLY_SEARCH_AID = 2;					//2=被推荐的认证号aid
+	APPLY_SEARCH_AUTHOR_NAME = 3;				//3=被推荐的认证号名称
+	APPLY_SEARCH_WX_MPNAME = 4;				//4=被推荐人的微信公众号名称
+}
+
+//黑白名单类型 -1=已禁用白名单 1=白名单  2=黑名单
+enum  ActListTypeEnum {
+	ACT_LIST_TYPE_RESERVED = 0;		//保留，占位用
+	ACT_LIST_TYPE_FORBIDDEN = -1;	// -1=已禁用白名单
+	ACT_LIST_TYPE_WHITE = 1;	// 1=白名单
+	ACT_LIST_TYPE_BLACK = 2;	// 2=黑名单
+}
+
+/////////////////////////////////////////////
+
+//申请黑白名单
+message ActApplyListBo{
+	int64 id = 1;						//记录id
+	int64 aid = 2;						//认证号aid(目前指推荐人)
+	int64 uid = 3;						//认证号用户uid
+	ActTypeEnum actType = 4;			//活动类型 10=商务推荐有奖（后续其它活动，依次往后扩展）
+	ActListTypeEnum actListType = 5;	//黑白名单类型 -1=已禁用白名单 1=白名单  2=黑名单
+	int64 operUid = 6;					//后台操作用户id
+	int32 createTime = 7;				//创建时间,单位：秒
+	int32 updateTime = 8;				//修改时间,单位：秒
+	string authorName = 9;				//认证号名称
+}
+
+message ActApplyListInfoBo{
+	ActApplyListBo applyListBo = 1;		//白黑名单信息
+	int32 inviteTransmitNum = 2;		//邀请转发数
+	int32 applyAllNum = 3;				//所有的申请记录数
+	int32 applyPassNum = 4;				//申请通过，已入驻记录数
+	ShortCodeStatusEnum shortCodeStatus = 5; 	//分享链接状态 status   1=未使用   2=使用中  3=已禁用（即已下线此用户的推荐）
+}
+
+//推荐分享码
+message ActShareBo{
+	int64 id = 1;					//记录id
+	int64 recommendAid = 2;			//推荐人的认证号aid
+	int64 recommendUid = 3;			//推荐人的用户uid
+	string shortCode = 4;			//分享的短码串
+	ShortCodeStatusEnum status = 5; //分享链接状态
+	ActTypeEnum actType = 6;		//活动类型 10=推荐分享
+	int64 operUid = 7;				//后台操作用户id
+	int32 createTime = 8;			//创建时间,单位：秒
+	int32 updateTime = 9;			//修改时间,单位：秒
+}
+
+
+//认证号申请信息
+message ApplyAuthorBo{
+	int64 id = 1;					//记录id
+	string authorName = 2;			//申请的认证号名称(要求平台唯一)
+	string wxno = 3;				//联系人微信号
+	string phone = 4;				//联系人手机号
+	int64 recommendUid = 5; 		//推荐人uid
+	int64 recommendAid = 6;			//推荐人认证号aid
+	int64 applyUid = 7;				//申请人uid
+	int32 applyTime = 8;			//申请时间,单位：秒
+	ApplyAuthorStatusEnum applyStatus = 9;			//审核状态  1=待审核  2=通过  3=不通过
+	string mark = 10;				//审核描述
+	int32 auditTime = 11;			//审核时间,单位：秒
+	int64 operUid = 12;				//审核人id
+	int64 aid = 13;					//关联的正式认证号aid
+	string wxMpName = 14;			//微信公众号名称
+	string headimage = 15;			//认证号头像地址
+	string note = 16;				//认证号的简介
+}
+
+//任务奖励信息
+message TaskRewardBo{
+	int64 id = 1;					//记录id
+	int64 recommendAid = 2;			//推荐人的认证号aid
+	int64 applyAid = 3;				//受邀请人认证号aid
+	string applyAuthorName = 4;				//受邀请人认证号名称
+	ActTypeEnum actType = 5;		//活动类型 10=推荐分享
+	TaskTypeEnum taskType = 6;		//任务类型 1000=新人入驻 1001=首次发文  1002=7天累计发文有3篇达标
+	int32 amount = 7; 				//奖励经验值
+	ReceiveStatusEnum receiveStatus = 8;	//奖励领取标志 1=待领取  2=已领取
+	int64 receiveUid = 9;					//奖励领取人uid
+	int64 operUid = 10;				//后台操作用户id(当后台对任务奖励进行调整时,记录操作者id)
+	int32 createTime = 11;			//创建时间,单位：秒
+	int32 updateTime = 12;			//修改时间,单位：秒
+	string extInfo = 13;			//关联的明细json
+	string taskDesc = 14;			// 奖励描述
+}
+
+message ActAuthorSimpleBo{
+	int64 aid = 1;				//认证号aid
+	string authorName = 2;		//认证号名称
+	ApplyAuthorStatusEnum auditStatus = 3;	// 审核状态
+}
+
+//奖励-基础信息
+message RewardBaseBo{
+	int64 rewardId = 1;				//奖励id
+	ActAuthorSimpleBo authorBo = 2;		//认证号信息
+	int32 amount = 3; 				//奖励经验值
+	int32 effectTime = 4; 			//奖励生效时间，单位：秒
+	TaskTypeEnum taskType = 5;		//任务类型 1000=新人入驻 1001=首次发文  1002=7天累计发文有3篇达标
+}
+
+message VideoDetailBo {
+	int64 aid = 1;						//作品所属认证号aid
+	string vid = 2;						//作品vid
+	string videoTitle = 3;				//作品标题
+	string videoPlayUrl = 4;			//作品播放地址
+	string videoCoverUrl = 5;			//作品封面
+	int32 videoPublishTime = 6;			//作品发布时间，单位：秒
+	int32 playTotal = 7; 							//当前播放总次数
+	int32 playUidCount = 8;							//当前的去推荐播放总人次
+	int32 playTotalThirtyHoursPublishTime = 9;		//发布后，30个小时播放总数
+	int32 playUidCountThirtyHoursPublishTime = 10;	//发布后，30个小时去推荐播放人次
+	int32 playTotalThirtyHoursSettleTime = 11;		//发文结算时间，30个小时播放总数
+	int32 playUidCountThirtyHoursSettleTime = 12;	//发文结算时间，30个小时去推荐播放人次
+}
+
+//奖励1-认证号入驻
+message AuthorEnterRewardBo{
+	RewardBaseBo rewardBaseBo = 1;  //奖励信息
+	int32 enterTime = 2;			//入驻时间(即认证号创建时间，单位：秒)
+	string taskDesc = 3;			// 奖励描述
+}
+
+//奖励2-认证号首次发文
+message AuthorVideoRewardBo {
+	RewardBaseBo rewardBaseBo = 1;  	//奖励信息
+	VideoDetailBo videoDetailBo = 2;	//作品信息
+	string taskDesc = 3;			// 奖励描述
+}
+
+//奖励3-认证号7天累计发文
+message AuthorSevenDaysVideoRewardBo {
+	RewardBaseBo rewardBaseBo = 1;  				//奖励信息
+	repeated VideoDetailBo videoDetailBo = 2;	 	//奖励信息详情(7天作品列表)
+	string taskDesc = 3;			// 奖励描述
+}
+
+//认证号结算统计信息
+message AuthorRewardStatBo{
+	ActAuthorSimpleBo authorBo = 1;		//认证号信息
+	int64 recommendAid = 2;			//推荐人的认证号aid
+	AuthorEnterRewardBo authorEnterRewardBo = 3;	//奖励1-认证号入驻
+	AuthorVideoRewardBo authorFirstVideoRewardBo = 4;	//奖励2-认证号首次发文
+	AuthorSevenDaysVideoRewardBo authorSevenDaysVideoRewardBo = 5;	//奖励3-认证号7天累计发文
+}
+
+message ShareTemplateBo{
+	int32 id = 1;
+	ShareDestEnum dest = 2;
+	string pattern = 3;
+	string preview = 4;
+	int32 createTime = 5;
+	int32 updateTime = 6;
+	string editor = 7;
+	ShareTemplateStateEnum state = 8;
+}
+
+message ShareTextBo {
+	int32 shareTempleId = 1;			// 文案id
+	string text = 2;					// 分享的文本内容
+    string image = 3;
+}

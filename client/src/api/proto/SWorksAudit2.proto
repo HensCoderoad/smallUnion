@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "WorksCommonEnum.proto";
+import "SWorksDomainAudit.proto";
+import "SWorksDomainVideo.proto";
+
+package ja.common.works;
+
+option java_multiple_files = false;
+
+service SWorksAudit {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.works_srv";
+    option (poet.ex_service_rpc_project) = "common.worksbase";
+
+    //作品---查询各种状态的总数    TODO act-video  待测试
+    rpc CountWorksByStatus2(CountWorksByStatus2Req) returns (CountWorksByStatus2Resp){};
+
+    //作品---查询各种状态的列表    TODO act-video  待测试
+    rpc ListWorksByStatus2(ListWorksByStatus2Req) returns (ListWorksByStatus2Resp){};
+
+    //作品---查询C类作品列表 TODO act-video  待测试
+    rpc ListWorksByMark2(ListWorksByMark2Req) returns (ListWorksByMark2Resp){};
+
+    //作品---查询C类作品总个数    TODO act-video  待测试
+    rpc CountWorksByMark2(CountWorksByMark2Req) returns (CountWorksByMark2Resp){};
+
+}
+
+//作品---查询各种状态的总数
+message CountWorksByStatus2Req {
+    google.protobuf.Any head = 1;
+    ja.common.works.enums.SearchBusinessSourceType source_type = 2; // 作品的业务来源类型,不能为0必须指定一个有效值
+    int64 source_id = 3;                // 作品业务来源的id（当source_type为认证号时这里的值代表是认证号id，不source_type为活动时这里的值代表的是活动id)
+    int64 owner_uid = 4;                // 作品的拥有人uid
+    string video_title = 5;             //作品标题
+    ja.common.works.domain.audit.SearchAuditStatus audit_status = 6; //查询作品审核状态
+    int32 ctime_begin = 7;				//查询开始时间,单位：秒   （作品的建档时间）
+    int32 ctime_end = 8;				//查询结束时间,单位：秒   （作品的建档时间）
+}
+
+message CountWorksByStatus2Resp{
+    google.protobuf.Any head = 1;
+    int32 total = 2;        			//满足查询条件的记录总数
+}
+
+//作品---查询各种状态的列表
+message ListWorksByStatus2Req {
+    google.protobuf.Any head = 1;
+    ja.common.works.enums.SearchBusinessSourceType source_type = 2; // 作品的业务来源类型,不能为0必须指定一个有效值
+    int64 source_id = 3;                // 作品业务来源的id（当source_type为认证号时这里的值代表是认证号id，不source_type为活动时这里的值代表的是活动id)
+    int64 owner_uid = 4;                // 作品的拥有人uid
+    string video_title = 5;             //作品标题
+    ja.common.works.domain.audit.SearchAuditStatus audit_status = 6; //查询作品审核状态
+    int32 ctime_begin = 7;				//查询开始时间,单位：秒   （作品的建档时间）
+    int32 ctime_end = 8;				//查询结束时间,单位：秒   （作品的建档时间）
+    int32 page_no = 9;					//分页页码,从1开始
+    int32 page_size = 10;				//分页页码,默认10
+}
+
+message ListWorksByStatus2Resp {
+    google.protobuf.Any head = 1;
+    repeated ja.common.works.domain.video.VideoAuditBo infos = 2; //列表，支持分页
+}
+
+
+//作品---查询C类列表
+message ListWorksByMark2Req {
+    google.protobuf.Any head = 1;
+    ja.common.works.enums.SearchBusinessSourceType source_type = 2; // 作品的业务来源类型,不能为0必须指定一个有效值
+    string mark = 3;                   //审核说明,关键字
+    string mark_type = 4;             //C类
+    ja.common.works.domain.audit.SearchAuditStatus audit_status = 5; //查询作品审核状态。在这里只支持 SEARCH_PASS_AND_MARK（已通过,但标记）和 SEARCH_NOT_PASS_AND_MARK（c类已下架）两种状态
+    int32 ctime_begin = 6;				//查询开始时间,单位：秒
+    int32 ctime_end = 7;				//查询结束时间,单位：秒
+    int32 page_no = 8;					//分页页码,从1开始
+    int32 page_size = 9;				//分页页码,默认10
+}
+
+message ListWorksByMark2Resp {
+    google.protobuf.Any head = 1;
+    repeated ja.common.works.domain.video.VideoAuditBo infos = 2; //列表，支持分页
+}
+
+//作品---查询C类总个数
+message CountWorksByMark2Req {
+    google.protobuf.Any head = 1;
+    ja.common.works.enums.SearchBusinessSourceType source_type = 2; // 作品的业务来源类型,不能为0必须指定一个有效值
+    string mark = 3;                   //审核说明,关键字
+    string mark_type = 4;             //C类
+    ja.common.works.domain.audit.SearchAuditStatus audit_status = 5; //查询作品审核状态。在这里只支持 SEARCH_PASS_AND_MARK（已通过,但标记）和 SEARCH_NOT_PASS_AND_MARK（c类已下架）两种状态
+    int32 ctime_begin = 6;				//查询开始时间,单位：秒
+    int32 ctime_end = 7;				//查询结束时间,单位：秒
+}
+
+message CountWorksByMark2Resp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;            //总个数
+}

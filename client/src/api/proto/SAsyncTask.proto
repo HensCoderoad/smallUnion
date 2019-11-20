@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "SCommonDomain.proto";
+import "AsyncTaskCommonEnum.proto";
+import "SAsyncTaskDomain.proto";
+
+package ja.common.asynctask;
+
+option java_multiple_files = false;
+
+service SAsyncTask {
+	option (poet.ex_service_type) = "srv";
+	option (poet.ex_service_handler_project) = "srv.asynctask_srv";
+	option (poet.ex_service_rpc_project) = "common.asynctaskbase";
+
+	//(1)任务--创建
+	rpc CreateJob(CreateJobReq) returns(CreateJobResp){}
+
+	//(2)任务--查看单个任务内容
+	rpc GetJob(GetJobReq) returns(GetJobResp){}
+
+	//(3)任务--查询任务总数
+	rpc CountJob(CountJobReq) returns(CountJobResp){}
+
+	//(4)任务--查询列表分页
+	rpc ListJob(ListJobReq) returns(ListJobResp){}
+
+	//(5)导出任务--更新结果
+	rpc UpdateJob(UpdateJobReq) returns(UpdateJobResp){}
+
+	//(6)导出任务--批量删除任务
+	rpc BatchDeleteJob(BatchDeleteJobReq) returns(BatchDeleteJobResp){}
+}
+
+//(1)任务--创建
+message CreateJobReq{
+	google.protobuf.Any head = 1;	//请求头
+	JobBo jobBo = 2;			//导出任务信息
+}
+
+message CreateJobResp{
+	google.protobuf.Any head = 1;	//响应头
+	int64 taskId = 2;				//任务id
+}
+
+//(2)任务--查看单个
+message GetJobReq{
+	google.protobuf.Any head = 1;	//请求头
+	int64 taskId = 2;				//导出任务id
+}
+
+message GetJobResp{
+	google.protobuf.Any head = 1;		//响应头
+	JobBo jobBo = 2;				//导出任务信息
+}
+
+//(3)任务--查询记录总数
+message CountJobReq{
+	google.protobuf.Any head = 1; //请求头
+	int64 operUid = 2; //操作者id
+	int32 beginTime = 3; //开始时间，单位：秒
+	int32 endTime = 4; //结束时间，单位：秒
+	string taskName = 5; //任务名称
+    ja.common.asynctask.enums.Task task = 6; // 任务类型
+    ja.common.asynctask.enums.TaskStatus taskStatus = 7; //任务状态  1=待处理  2=处理失败  3=处理成功
+}
+
+message CountJobResp{
+	google.protobuf.Any head = 1;	//响应头
+	int32 total = 2;				//总数
+}
+
+
+//(4)任务--查询记录分页列表
+message ListJobReq{
+	google.protobuf.Any head = 1; //请求头
+	int64 operUid = 2; //操作者id
+	int32 beginTime = 3; //开始时间，单位：秒
+	int32 endTime = 4; //结束时间，单位：秒
+	string taskName = 5; //任务名称
+    ja.common.asynctask.enums.Task task = 6; // 任务类型
+    ja.common.asynctask.enums.TaskStatus taskStatus = 7; //任务状态  1=待处理  2=处理失败  3=处理成功
+	int32 offset = 8; //起始位置
+	int32 size = 9; //页大小,默认为10
+}
+
+message ListJobResp{
+	google.protobuf.Any head = 1;		//响应头
+	repeated JobBo infos = 2;	//列表
+}
+
+//(5)导出任务--更新处理结果
+message UpdateJobReq{
+	google.protobuf.Any head = 1;   //请求头
+	int64 taskId = 2;               //任务id
+    ja.common.asynctask.enums.TaskStatus taskStatus = 3; //任务状态  1=待处理  2=处理失败  3=处理成功
+	string taskResult = 4;          //任务结果
+    string errorMsg = 5;            // 任务处理失败时的错误信息
+}
+
+message UpdateJobResp{
+	google.protobuf.Any head = 1;	//响应头
+}
+
+
+//(6)任务--批量删除
+message BatchDeleteJobReq{
+	google.protobuf.Any head = 1;		//请求头
+	int64 operUid = 2;					//操作者id
+	repeated int64 taskId = 3;			//导出任务id列表
+}
+
+message BatchDeleteJobResp{
+	google.protobuf.Any head = 1;		//响应头
+	CommonLongResultBo info = 2;		//处理结果
+}

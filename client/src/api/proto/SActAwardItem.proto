@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+
+import "SCommonDomain.proto";
+import "SActDomain.proto";
+
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+service SActAwardItem {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.act_srv";
+    option (poet.ex_service_rpc_project) = "common.actbase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 活动--奖品--运营后台--查询奖品列表分页
+    rpc ListAwardItem(ListAwardItemReq) returns(ListAwardItemResp){}
+
+    //活动--奖品--运营后台--查询奖品列表总数
+    rpc CountAwardItem(CountAwardItemReq) returns(CountAwardItemResp){}
+
+    //活动--活动奖品--运营后台--新增奖品
+    rpc AddAwardItem(AddAwardItemReq) returns(AddAwardItemResp){}
+
+    //活动--活动奖品--运营后台--修改奖品
+    rpc UpdateAwardItem(UpdateAwardItemReq) returns(UpdateAwardItemResp){}
+
+    //活动--活动奖品--运营后台--删除奖品
+    rpc DeleteAwardItem(DeleteAwardItemReq) returns(DeleteAwardItemResp){}
+
+    //活动--活动奖品--运营后台--查看单奖品详情
+    rpc GetAwardItem(GetAwardItemReq) returns(GetAwardItemResp){}
+}
+
+
+message GetAwardItemReq {
+    google.protobuf.Any head = 1;
+    int64 awardItemId = 2;
+}
+
+message GetAwardItemResp {
+    google.protobuf.Any head = 1;
+    AwardItemBo info = 2;
+}
+
+
+message DeleteAwardItemReq {
+    google.protobuf.Any head = 1;
+    repeated int64 awardItemId = 2;
+    int64 operUid = 3;
+}
+
+message DeleteAwardItemResp {
+    google.protobuf.Any head = 1;
+    CommonLongResultBo info = 2;
+}
+
+message UpdateAwardItemReq {
+    google.protobuf.Any head = 1;
+    AwardItemBo info = 2;
+    int64 operUid = 3;
+}
+
+message UpdateAwardItemResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+message AddAwardItemReq {
+    google.protobuf.Any head = 1;
+    AwardItemBo info = 2;
+    int64 operUid = 3;
+}
+
+message AddAwardItemResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+
+message CountAwardItemReq {
+    google.protobuf.Any head = 1;
+    string name = 2;
+}
+
+message CountAwardItemResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+
+message ListAwardItemReq {
+    google.protobuf.Any head = 1;
+    string name = 2;
+    int32 offset = 3;
+    int32 size = 4;
+}
+
+message ListAwardItemResp {
+    google.protobuf.Any head = 1;
+    repeated AwardItemBo infoList = 2;
+}

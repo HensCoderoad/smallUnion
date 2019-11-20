@@ -1,0 +1,822 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "SWorks.proto";
+
+package ja.common.user;
+
+option java_multiple_files = false;
+
+service SUser {
+	option (poet.ex_service_type) = "srv";
+	option (poet.ex_service_handler_project) = "srv.user_srv";
+	option (poet.ex_service_rpc_project) = "common.userbase";
+
+	rpc KeyLogin (KeyLoginReq) returns (LoginResp) {}
+	//第三方登陆
+    rpc LoginByThirdPart (LoginByThirdPartReq) returns (LoginResp) {}
+    rpc GetUserBaseInfo(UserCommonReq) returns (GetUserBaseInfoResp) {}
+    rpc BatchGetUserBaseInfo(BatchGetUserBaseInfoReq) returns (BatchGetUserBaseInfoResp) {}
+    rpc ModifyUserInfo(ModifyUserInfoReq) returns (UserCommonResp) {}
+	rpc CheckNumLogin(CheckNumLoginReq) returns (LoginResp) {}
+	//TODO (后面再处理)修改短位id
+	//提交审核资料
+	rpc SubmitReview(SubmitReviewReq) returns (UserCommonResp) {}
+	//审批待审核资料
+	rpc Review(ReviewReq) returns (UserCommonResp) {}
+	//获取待审核资料
+	rpc GetReview(UserCommonReq) returns (GetReviewResp) {}
+	//批量获取审核资料
+	rpc BatchGetReview(BatchGetReviewReq) returns (BatchGetReviewResp) {}
+	//获取标签
+	rpc GetTags(GetTagsReq) returns (GetTagsResp) {}
+	//设置标签
+	rpc SetTags(SetTagsReq) returns (UserCommonResp) {}
+	//获取用户昵称
+	rpc GetNick(UserCommonReq) returns (GetNickResp) {}
+	//批量获取用户昵称
+	rpc BatchGetNick(BatchGetNickReq) returns (BatchGetNickResp) {}
+	//批量获取用户头像
+	rpc BatchGetAvatar(BatchGetAvatarReq) returns (BatchGetAvatarResp) {}
+	//获取用户的openid
+	rpc GetUserOpenid(GetUserOpenidReq)  returns (GetUserOpenidResp) {}
+	//获取一批用户用户的所有标签
+	rpc BatchGetTags(BatchGetTagsReq) returns (BatchGetTagsResp) {}
+	//绑定信息 - 手机号 - 姓名
+	rpc GetBindInfo(GetBindInfoReq) returns (GetBindInfoResp) {}
+	//判断是否已通过身份认证
+	rpc IsAuthUser(IsAuthUserReq) returns (IsAuthUserResp) {}
+	//身份认证(user)
+	rpc BindInfo(BindInfoReq) returns (BindInfoResp) {}
+	//审核身份认证
+	rpc ReviewAuthUser(ReviewAuthUserReq) returns (ReviewAuthUserResp) {}
+	// 检查文字内容合法性
+	rpc IsContentSecure(IsContentSecureReq) returns (IsContentSecureResp){}
+	// 获取待审核的用户列表
+	rpc GetAuthingUsers(GetAuthingUsersReq) returns (GetAuthingUsersResp){}
+	// 根据条件获取用户id列表
+	rpc GetUids(GetUidsReq) returns (GetUidsResp){}
+	// 批量获取用户基本信息
+	rpc BatchGetUserBaseInfo2(BatchGetUserBaseInfo2Req) returns (BatchGetUserBaseInfo2Resp) {}
+	// 重置用户数据
+	rpc ResetUserData(ResetUserDataReq) returns (ResetUserDataResp){}
+	// 获取用于管理后台审核的用户数据
+	rpc GetUserAvatarsForAudit(GetUserAvatarsForAuditReq) returns (GetUserAvatarsForAuditResp){}
+	// 审核用户头像
+	rpc AuditUserAvatars(AuditUserAvatarsReq) returns (AuditUserAvatarsResp){}
+	// 获取小程序token
+	rpc GetMiniProgramsToken(GetMiniProgramsTokenReq) returns (GetMiniProgramsTokenResp){}
+	// 用于触发用户的昵称改变事件(通常是手动触发或者运营后台调用)
+	rpc TriggerEvent(TriggerEventReq) returns (TriggerEventResp){}
+	// 临时登录请求 (只有测试环境和开发环境可以使用)
+	rpc LoginTmp (ja.common.user.LoginTmpReq) returns (ja.common.user.LoginResp) {}
+	// 解除绑定用户的第三方登录账号
+	rpc UnbindThirdPartyAccount(UnbindThirdPartyAccountReq) returns(UnbindThirdPartyAccountResp){}
+	// TODO 获取用户绑定的第三方登录账号列表
+	rpc GetThirdPartyAccounts(GetThirdPartyAccountsReq) returns (GetThirdPartyAccountsResp) {}
+	//获取自动更新
+	rpc AppUpdateInfo (AppUpdateInfoReq) returns (AppUpdateInfoResp) {}
+	//增加运营者
+	rpc SaveGrantedUser (WriteGrantedUserInfoReq) returns (WriteGrantedUserInfoResp) {}
+	//增加运营者 运营者的回执
+    //v2.0已经废弃
+	rpc SaveGrantedUserCallBack (SaveGrantedUserCallBackReq) returns (SaveGrantedUserCallBackResp) {}
+	//删除运营者
+	rpc DeleteGrantedUser (WriteGrantedUserInfoReq) returns (WriteGrantedUserInfoResp) {}
+	//查看运营者列表
+	rpc GetGrantedUserList (ReadGrantedUserInfoReq) returns (GetGrantedUserListInfoResp) {}
+	//查看运营者对应的管理者列表
+	rpc GetGrantUserList (ReadGrantedUserInfoReq) returns (GetGrantedUserListInfoResp) {}
+	//订阅通知计算
+	rpc PushSubscribeInfoSchedule (PushSubscribeInfoScheduleReq) returns (PushSubscribeInfoScheduleResp) {}
+	//订阅通知发送
+	rpc PushSubscribeInfoScheduleSend (PushSubscribeInfoScheduleReq) returns (PushSubscribeInfoScheduleResp) {}
+	//获取他人简单信息
+	rpc GetOtherSimpleInfo (GetOtherSimpleInfoReq) returns (GetOtherSimpleInfoResp) {}
+    //查看运营者的历史操作状态(用于客户端未读消息是否接受的状态的批量查看)
+    rpc GetGrantUserStatus (GetGrantUserStatusReq) returns (GetGrantUserStatusResp) {}
+    //获取授权token
+    rpc GetGrantToken (GetGrantTokenReq) returns (GetGrantTokenResp) {}
+	//绑定手机号
+	rpc BindTelphone (BindTelphoneReq) returns (BindTelphoneResp){}
+	//获取手机号
+	rpc GetTelphone (GetTelphoneReq) returns (GetTelphoneResp){}
+    //获取订阅通知的文章
+    rpc GetUserPublishWork (GetUserPublishWorkReq) returns (GetUserPublishWorkResp){}
+	// 获取用户最后下线时间
+	rpc GetUserLastLoginTime(GetUserLastLoginTimeReq) returns(GetUserLastLoginTimeResp){}
+	// 判断用户是不是运营者
+	rpc CheckGrantUser(CheckGrantUserReq) returns(CheckGrantUserResp){}
+
+	//根据用户昵称，获取用户基本信息
+	rpc GetUserInfoByNick(GetUserInfoByNickReq) returns (GetUserInfoByNickResp) {}
+
+	//////////////////////////////////////////////////////
+	//根据用户uid，获取最早的可用的一个formid信息
+	rpc GetOneFormIdByUid(GetOneFormIdByUidReq) returns (GetOneFormIdByUidResp) {}
+
+	//更新指定的formId为已使用状态
+	rpc UpdateFormIdUsed(UpdateFormIdUsedReq) returns (UpdateFormIdUsedResp) {}
+
+	//更新个人资料
+	rpc UpdateContact (UpdateContactReq) returns (UpdateContactResp){}
+
+	//获取个人联系方式、收货地址
+	rpc GetContact (GetContactReq) returns (GetContactResp){}
+}
+
+
+message GetContactReq {
+	google.protobuf.Any head = 1;
+	int64 uid = 2;
+}
+
+message GetContactResp {
+	google.protobuf.Any head = 1;
+	string contact = 3;  	 //联系方式
+	repeated string address = 4;		 //收货地址(可能多个)
+}
+
+message UpdateContactReq {
+	google.protobuf.Any head = 1;
+	int64 uid = 2;
+	string contact = 3;  	 //联系方式
+	string address = 4;		 //收货地址
+}
+
+message UpdateContactResp {
+	google.protobuf.Any head = 1;
+	bool result = 2;
+}
+
+//根据用户uid，获取最早的可用的一个formid信息
+message GetOneFormIdByUidReq{
+	google.protobuf.Any head = 1;
+	int64 uid = 2;                       //uid
+}
+
+message GetOneFormIdByUidResp{
+	google.protobuf.Any head = 1;
+	string formId = 2;
+}
+
+//更新指定的formId为已使用状态
+message UpdateFormIdUsedReq{
+	google.protobuf.Any head = 1;
+	string formId = 2;                       //formId
+}
+
+message UpdateFormIdUsedResp{
+	google.protobuf.Any head = 1;
+}
+
+message CheckGrantUserReq{
+	google.protobuf.Any head = 1;
+	int64 uid = 2;                       //uid
+}
+
+message CheckGrantUserResp{
+	google.protobuf.Any head = 1;
+	bool isGrantUser = 2;
+}
+
+message GetUserPublishWorkResp{
+    google.protobuf.Any head = 1;
+    repeated ja.common.works.VideoInfo info = 2;						// 视频信息
+}
+
+message GetUserPublishWorkReq{
+    google.protobuf.Any head = 1;	//请求头
+    int64 uid = 2;                       //uid
+}
+
+
+message GetTelphoneReq{
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;                       //uid
+}
+
+
+message GetTelphoneResp{
+	google.protobuf.Any head = 1;	//请求头
+	string telphone = 2;                       //手机号码
+}
+
+message BindTelphoneReq {
+	google.protobuf.Any head = 1;	//请求头
+	string telphone = 2;                       //手机号码
+	int64 uid =3;
+	int64 time = 4;
+	string appid = 5;
+}
+message BindTelphoneResp{
+	google.protobuf.Any head = 1;	//请求头
+	string telphone = 2;                       //手机号码
+}
+
+message GetGrantTokenReq {
+	google.protobuf.Any head = 1;	//请求头
+	string token = 2;				//原登录token
+	//AuthorType
+	int32 authorType = 3;			//需要签发的token类型
+}
+
+message GetGrantTokenResp {
+	google.protobuf.Any head = 1;	//请求头
+	string grantToken = 2;          //授权token
+}
+
+message GetGrantUserStatusReq{
+    google.protobuf.Any head = 1;	//请求头
+    repeated string messageid = 2;		//消息id
+}
+
+message GetGrantUserStatusItem {
+    string messageid = 1;
+    int32 status = 2;//0待确认1已确认2已拒绝
+}
+
+message GetGrantUserStatusResp{
+    google.protobuf.Any head = 1;	//请求头
+    map<string,GetGrantUserStatusItem> list = 2;
+}
+
+message GetOtherSimpleInfoResp{
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;					//用户id
+	string nick = 3;				//昵称
+	string avatar = 4;				//头像
+}
+
+message GetOtherSimpleInfoReq{
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;					//用户id
+}
+
+message PushSubscribeInfoScheduleResp{
+	google.protobuf.Any head = 1;	//请求头
+}
+message PushSubscribeInfoScheduleReq{
+	google.protobuf.Any head = 1;	//请求头
+}
+
+message GetGrantedUserBaseInfo{
+	int64 uid = 1;					//用户id
+	string nick = 2;				//昵称
+	string avatar = 3;				//头像
+	int32 gender = 4;				//性别
+	int32 status = 5;				//状态 0待确认 1 已确定  2已拒绝
+}
+
+message GrantedUserInfo{
+	int64 uid = 1;					//用户id
+	string nick = 2;				//昵称
+	string avatar = 3;				//头像
+}
+
+message GetGrantedUserListInfoResp{
+	google.protobuf.Any head = 1;	//请求头
+	repeated GetGrantedUserBaseInfo info = 2;
+	GrantedUserInfo grantUserInfo = 3;
+}
+
+message ReadGrantedUserInfoReq {
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;					//uid
+}
+
+message SaveGrantedUserCallBackReq{
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;					//将要进行授权的uid
+	int64 grantUid = 3;			//授权者的uid
+	bool  isAgree = 4;			//是否同意
+	string token = 5;			//用户token
+}
+message WriteGrantedUserInfoReq{
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;					//将要进行授权的uid
+	int64 grantedUid = 3;			//将要被授权的uid
+}
+
+message SaveGrantedUserCallBackResp{
+	google.protobuf.Any head = 1;	//请求头
+	string grantToken = 2;		//授权token
+	string meesageid = 3;		//消息id
+}
+message WriteGrantedUserInfoResp{
+	google.protobuf.Any head = 1;	//请求头
+}
+
+message AppUpdateInfoReq{
+	google.protobuf.Any head = 1;	//请求头
+	string curretnVersion = 2;	//当前版本
+}
+
+message AppUpdateInfoResp{
+	google.protobuf.Any head = 1;	//请求头
+	string address = 2; // 下载地址
+	string message = 3;//更新内容
+	int32 updateType = 4;//更新类型
+	string newVersion = 5;//新版本号
+	int32 minVersion =6;//强制最小更新版本
+}
+
+
+message ThirdPartyAccountInfo {
+	string appid = 1;
+	string openid = 2;
+	//TPType 
+	int32 type = 3;						//平台类型
+}
+
+message GetThirdPartyAccountsResp {
+	google.protobuf.Any head = 1;	//请求头
+	repeated ThirdPartyAccountInfo info = 2;//绑定数据列表
+}
+
+message GetThirdPartyAccountsReq {
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;
+}
+
+message GetUserOpenidReq {
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;
+	string appid = 3;				//如果为空默认是小程序的appid
+}
+
+message LoginTmpReq {
+	google.protobuf.Any head = 1;				//请求头
+	int64 uid = 2;								//指定要登录的uid
+}
+
+message TriggerEventResp {
+	google.protobuf.Any head = 1;	//请求头
+}
+
+message TriggerEventReq {
+	enum EventType {
+		UserNickChange = 0;
+	}
+	google.protobuf.Any head = 1;	//请求头
+	EventType type = 2;				//事件类型
+}
+
+enum ReviewAuthUserType {
+	Refuse = 0;
+	Agree = 1;
+}
+
+message ReviewAuthUserResp {
+	google.protobuf.Any head = 1;	//请求头
+}
+
+message ReviewAuthUserReq {
+	google.protobuf.Any head = 1;	//请求头
+	ReviewAuthUserType type = 2;	//审核类型
+	int64 uid = 3;					//用户uid
+	string cause = 4;				//原因
+}
+
+enum UserOnlineStatus {
+	UserOnlineStatusDef = 0;
+	ONLINE = 1;
+	OFFLINE = 2;
+}
+
+message GetBindInfoResp {
+	google.protobuf.Any head = 1;	//请求头
+	string name = 2;				//姓名
+	string phone = 3;				//电话号
+}
+
+enum AuthUserStatus {
+	NotAuthUser = 0;				//不是认证用户
+	AuthUser = 1;					//认证用户
+	AuthUserReview = 2;				//审核中
+	AuthUserFailed = 3;				//认证失败
+}
+
+message IsAuthUserResp {
+	google.protobuf.Any head = 1;	//请求头
+	AuthUserStatus status = 2;		//认证状态
+	string cause = 3;				//如果是拒绝，那么这个就是被拒绝的原因
+}
+
+message BindInfoResp {
+	google.protobuf.Any head = 1;	//请求头
+}
+
+message IsAuthUserReq {
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;					//用户uid
+}
+
+message BindInfoReq {
+	google.protobuf.Any head = 1;	//请求头
+	string name = 2;				//姓名
+	string phone = 3;				//手机
+	int64 uid = 4;					//用户uid
+}
+
+message GetBindInfoReq {
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;					//用户uid
+}
+
+
+message BatchGetAvatarResp {
+	google.protobuf.Any head = 1;	//请求头
+	//<uid, 头像>
+	map<int64, string> avatars = 2;	//对应的头像列表
+}
+
+message BatchGetAvatarReq {
+	google.protobuf.Any head = 1;	//请求头
+	repeated int64 uids = 2;		//id列表
+}
+
+message BatchGetNickResp {
+	google.protobuf.Any head = 1;	//请求头
+	//<uid, 昵称>
+	map<int64, string> nicks = 2;	//对应的昵称列表
+}
+
+message BatchGetNickReq {
+	google.protobuf.Any head = 1;	//请求头
+	repeated int64 uids = 2;		//id列表
+}
+
+message TagsInfo {
+	repeated string tags = 1;
+}
+
+message BatchGetTagsResp {
+	google.protobuf.Any head = 1;	//请求头
+	//<uid, 标签列表>
+	map<int64, TagsInfo> infos = 2;	//标签列表
+}
+
+message BatchGetTagsReq {
+	google.protobuf.Any head = 1;	//请求头
+	repeated int64 uids = 2;		//用户id
+	int32 type = 3;					//标签类型
+	bool all = 4;					//all = true 忽略status，返回所有的标签
+}
+
+message GetUserOpenidResp {
+	google.protobuf.Any head = 1;	//请求头
+	string openid = 2;				//openid
+}
+
+message GetNickResp {
+	google.protobuf.Any head = 1;	//请求头
+	string nick = 2;				//用户昵称
+}
+
+message BatchGetReviewResp {
+	google.protobuf.Any head = 1;	//请求头
+	//<uid, ModifyUserBaseInfo>
+	map<int64, ModifyUserBaseInfo> infos = 2;//待审核资料
+}
+
+message BatchGetReviewReq {
+	google.protobuf.Any head = 1;	//请求头
+	repeated int64 uid = 2;
+}
+
+message SetTagInfo {
+	string tag = 1;				//标签名称
+	int32 status = 2;			//状态
+}
+
+message SetTagsReq {
+	google.protobuf.Any head = 1;	//请求头
+	int64 owner = 2;				//拥有者
+	int32 type = 3;					//标签类型
+	repeated SetTagInfo tags = 4;	//标签
+	bool isCover = 5;				//是否覆盖类型下所有标签(同类型的原标签会被全部删除，变成tags)
+}
+
+message GetTagsReq {
+	google.protobuf.Any head = 1;	//请求头
+	int64 owner = 2;				//拥有者
+	int32 type = 3;					//标签类型
+	bool all = 4;					//all = true 忽略status，返回所有的标签
+}
+
+message GetTagsResp {
+	google.protobuf.Any head = 1;	//请求头
+	repeated string tags = 2;		//标签
+}
+
+message GetReviewResp {
+	google.protobuf.Any head = 1;	//请求头
+	ModifyUserBaseInfo userinfo = 2;//待审核资料
+}
+
+message ReviewReq {
+	google.protobuf.Any head = 1;	//请求头
+	int64 optuid = 2;				//操作者
+	int32 opttype = 3;				//1 = 同意、2 = 拒绝
+	int64 taruid = 4;				//目标用户
+}
+
+message ModifyUserBaseInfo {
+	int64 uid = 1;					//用户id
+	string nick = 2;				//昵称
+	string avatar = 3;				//头像
+	int32 gender = 4;				//性别
+	int32 birthday = 5;				//生日(时间戳，秒)
+	string region = 6;				//地区（中国\广州\天河）
+	string sign = 7;				//签名
+	string greeturl = 8;			//认证视频
+	string greetCoverUrl = 9;		//认证视频的封面 url
+	int32 wxAuthorize = 14;			//微信认证标识 1为认证，0为非认证（即游客）
+}
+
+message SubmitReviewReq {
+	google.protobuf.Any head = 1;	//请求头
+	ModifyUserBaseInfo userinfo = 2;//需要修改的信息
+}
+
+message CheckNumLoginReq {
+	google.protobuf.Any head = 1;	//请求头
+	string mobilenum = 2;			//电话号
+	string checknum = 3;			//验证码
+	string deviceid = 4;			//设备id
+	int32 appver = 5;				//app版本号
+	string userinfo = 6;			//用户信息(json字符串)
+	string sign = 7;				//数字签名
+	string expand = 8;				//扩展字段
+	string appid = 9;				//appid - 如果为空服务端会根据TPType设置一个默认的appid - 假如相同的TPType有不同的appid，客户端务必传递一个正确的appid给服务端
+}
+
+message UserCommonResp {
+	google.protobuf.Any head = 1;	//请求头
+}
+
+message ModifyUserInfoReq {
+	google.protobuf.Any head = 1;	//请求头
+	ModifyUserBaseInfo userinfo = 2;//需要修改的信息
+}
+
+message BatchGetUserBaseInfoResp {
+	google.protobuf.Any head = 1;	//请求头
+	map<int64, UserBaseInfo> user = 2;			//用户信息
+}
+
+message BatchGetUserBaseInfoReq {
+	google.protobuf.Any head = 1;	//请求头
+	repeated int64 uid = 2;
+}
+
+message UserCommonReq {
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;
+}
+
+message KeyLoginReq {
+	google.protobuf.Any head = 1;	//请求头
+	string deviceid = 2;			//设备id
+	int64 uid = 3;					//用户id
+	int32 appver = 4;				//app版本号
+	int32 renew = 5;				//是否续约 0 = 不续约, 1 = 续约, 续约之后会通过LoginResp返回一个新的token,同时旧的token作废
+	string appid = 6;				//appid - 如果为空服务端会默认是小程序的appid
+	string token = 7;				//token
+}
+
+message UserBaseInfo {
+	int64 uid = 1;					//用户id
+	string nick = 2;				//昵称
+	string avatar = 3;				//头像
+	int32 gender = 4;				//性别
+	int64 birthday = 5;				//生日
+	string region = 6;				//地区（中国\广州\天河）
+	string sign = 7;				//签名
+	int32 uno = 8;					//短id
+	//当lock = 1 时意味着ModifyUserInfo接口无法修改用户信息，需要找被锁的业务进行内部rpc审核资料
+	int32 lock = 9;					//锁状态 - 1 = 锁、2 = 没
+	int32 status = 10;				//审核状态 - 1 = 审核中、0 = 未在审核中
+	string greeturl = 11;			//介绍视频
+	int32 genderlock = 12;			//性别锁
+	string greetCoverUrl = 13;  	//认证视频的封面 url
+	int32 wxAuthorize = 14;			//微信认证标识 1为认证，0为非认证（即游客）
+	int32 regTime = 15;				//注册时间，单位：秒
+}
+
+message ConfigValue {
+	oneof Value {
+		string str = 1;
+		int32 i32 = 2;
+		int64 i64 = 3;
+		double dub = 4;
+		float flt = 5;
+		bytes byt = 6;
+		bool bol = 7;
+		google.protobuf.Any any = 8;
+	}
+}
+
+message LoginResp {
+	google.protobuf.Any head = 1;	//请求头
+	string token = 2;				//token - 用于后续请求的快速验证
+	string expand = 3;				//扩展数据
+	UserBaseInfo user = 4;			//用户信息
+	map<string, ConfigValue> config = 5;//配置信息
+}
+
+message LoginByThirdPartReq {
+	google.protobuf.Any head = 1;	//请求头
+	string openid = 2;				//第三方登陆的openid
+	string authtoken = 3;			//第三方登陆的验证token
+	string deviceid = 4;			//设备id
+	int32 tptype = 5;				//第三方渠道类型
+	int32 appver = 6;				//app版本号
+	string userinfo = 7;			//用户信息(json字符串)
+	string sign = 8;				//数字签名
+	string expand = 9;				//扩展字段
+	string session_key = 10;		//会话秘钥
+	string unionid = 11;			//微信开放平台的unionid
+	string appid = 12;				//appid
+	bool renew = 13;    			//当登录行为不希望打断其他设备的登录token的时候传true, 只有特定的平台(WEB_WEIXIN)能生效
+}
+
+message GetUserBaseInfoResp {
+	google.protobuf.Any head = 1;	//请求头
+	UserBaseInfo user = 2;			//用户信息
+}
+
+message IsContentSecureReq {
+	google.protobuf.Any head = 1;	//请求头
+	string content = 2;				//文本内容
+}
+
+message IsContentSecureResp {
+	google.protobuf.Any head = 1;	//请求头
+	int32 status = 2;				//0=安全，其它=不安全
+	string cause = 3;				//原因描述
+}
+
+message GetAuthingUsersReq{
+	google.protobuf.Any head = 1; 		//请求头
+	string condition = 2;				//查询条件，可空
+	int32 pageid = 3;					//获取的起始记录的位置从0开始
+	int32 count = 4;					//获取的数量
+}
+
+message AuthingUserInfo{
+	int64 uid = 1;						//用户id
+	string nick = 2;					//用户昵称
+	string phone = 3;					//电话号码
+	string name = 4;					//姓名
+}
+message GetAuthingUsersResp{
+	google.protobuf.Any head = 1; 		//请求头
+	repeated AuthingUserInfo infos= 2;	//数据列表
+	int32 next = 3;						//下一页起始记录的位置
+}
+
+message GetUidsReq{
+	google.protobuf.Any head = 1;
+	string condition = 2;				// 查询条件
+	int32 pageid = 3;					//获取的起始记录的位置从0开始
+	int32 count = 4;					//获取的数量
+}
+
+message GetUidsResp{
+	google.protobuf.Any head = 1;
+	repeated int64 uids = 2;			//符合条件的用户id列表
+	int32 next = 3;						//下一页起始记录的位置
+}
+
+message BatchGetUserBaseInfo2Req{
+	google.protobuf.Any head = 1;
+	repeated int64 uids = 2;
+}
+
+message UserBaseInfo2 {
+	int64 uid = 1;					//用户id
+	string nick = 2;				//昵称
+	string avatar = 3;				//头像
+	int32 gender = 4;				//性别
+	int64 birthday = 5;				//生日
+	string region = 6;				//地区（中国\广州\天河）
+	string sign = 7;				//签名
+	int32 uno = 8;					//短id
+	string greeturl = 9;			//介绍视频
+	string greetCoverUrl = 10;  	//认证视频的封面 url
+	int64 registerTime = 11;		//注册时间
+	int32 age = 12;					//年龄
+	int32 wxAuthorize = 14;			//微信认证标识 1为认证，0为非认证（即游客）
+}
+
+message BatchGetUserBaseInfo2Resp {
+	google.protobuf.Any head = 1;
+	map<int64, UserBaseInfo2> infos = 2;
+}
+
+message ResetUserDataReq {
+	google.protobuf.Any head = 1;
+	int64 uid = 2; // 用户id
+	ResetUserDataTarget target = 3; // 要重置的项
+}
+
+enum ResetUserDataTarget {
+	Avatar = 0;						// 头像
+	GreetVideo = 1;					// 视频
+	Nick = 2;						// 昵称
+	Sign = 3;						// 签名
+}
+
+message ResetUserDataResp {
+	google.protobuf.Any head = 1;
+	string data = 2;				// 重置成功后的新值
+}
+
+message GetUserAvatarsForAuditReq{
+	google.protobuf.Any head = 1;
+	int32 pageid = 2;							//获取的起始记录的位置从0开始
+	int32 count = 3;							//获取的数量
+}
+
+message UserAvatarForAudit{
+	int64 uid = 1;					// 用户id
+	int32 uno = 2;					// 用户短id
+	string avatar = 3;				// 头像链接
+	int64 updatetime = 4;			// 修改时间
+	string recordid = 5;			// 修改记录的id
+}
+
+message GetUserAvatarsForAuditResp{
+	google.protobuf.Any head = 1;
+	repeated UserAvatarForAudit info = 2;
+	int32 total = 3;					// 总记录数
+	int32 next = 4;						// 下一页的记录起始位置
+}
+
+message AuditUserAvatarsReq{
+	google.protobuf.Any head = 1;
+	repeated UserAvatarAuditInfo info = 2;
+	int32 result = 3;							// 1=通过，2=重置
+}
+
+message UserAvatarAuditInfo{
+	string recordid = 1;						// 修改记录的id
+	int64 uid = 2;								// 用户id
+}
+
+message AuditUserAvatarsResp{
+	google.protobuf.Any head = 1;
+}
+
+message GetMiniProgramsTokenReq{
+	google.protobuf.Any head = 1;
+	string appid = 2;							// 为空则取的是音盟的token
+}
+
+message GetMiniProgramsTokenResp{
+	google.protobuf.Any head = 1;
+	string token = 2;					// 小程序的token
+}
+
+message UnbindThirdPartyAccountReq{
+	google.protobuf.Any head = 1;
+	int64 uid = 2;						// 用户id
+}
+
+message UnbindThirdPartyAccountResp{
+	google.protobuf.Any head = 1;
+}
+
+message GetApiTokenReq{
+	google.protobuf.Any head = 1;
+	int64 uid = 2;
+	string appid = 3;
+}
+
+message GetApiTokenResp{
+	google.protobuf.Any head = 1;
+	string token = 2;
+}
+
+message GetUserLastLoginTimeReq{
+	google.protobuf.Any head = 1;
+	int64 uid = 2;
+}
+
+message GetUserLastLoginTimeResp{
+	google.protobuf.Any head = 1;
+	int64 time = 2;						// 如果能取到则返回非0值，取不到则返回0
+}
+
+message GetUserInfoByNickReq{
+	google.protobuf.Any head = 1;
+	string nick = 2;					//用户昵称
+}
+
+message GetUserInfoByNickResp{
+	google.protobuf.Any head = 1;
+	UserBaseInfo user = 2;					//用户基本信息
+}

@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "ActCommonEnum.proto";
+import "SActDomain.proto";
+
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+service SActSubscribe {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.act_srv";
+    option (poet.ex_service_rpc_project) = "common.actbase";
+
+    /////////////////////////////////////////////////////////////////////
+
+    //活动--订阅--小程序--订阅某个活动
+    rpc SubscribeAct(SubscribeActReq) returns(SubscribeActResp){}
+
+    //活动--订阅--小程序--取消订阅某个活动
+    rpc UnSubscribeAct(UnSubscribeActReq) returns(UnSubscribeActResp){}
+
+    //活动--订阅--小程序--查询某个用户订阅的活动列表
+    rpc ListSubscribeActByUid(ListSubscribeActByUidReq) returns(ListSubscribeActByUidResp){}
+
+    //活动--订阅--小程序--查询某个用户订阅的活动总数
+    rpc CountSubscribeActByUid(CountSubscribeActByUidReq) returns(CountSubscribeActByUidResp){}
+
+    //活动--订阅--小程序--查询某个活动的订阅用户总数
+    rpc CountSubscribeUsersByActId(CountSubscribeUsersByActIdReq) returns(CountSubscribeUsersByActIdResp){}
+
+    //活动--订阅--小程序--获取当前登录用户与指定的活动的订阅状态
+    rpc GetSubscribeStateByUid(GetSubscribeStateByUidReq) returns(GetSubscribeStateByUidResp){}
+
+}
+
+
+message CountSubscribeUsersByActIdReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+}
+
+message CountSubscribeUsersByActIdResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+
+message GetSubscribeStateByUidReq {
+    google.protobuf.Any head = 1;
+    int64 uid = 2;
+    int64 actId = 3;
+}
+
+message GetSubscribeStateByUidResp {
+    google.protobuf.Any head = 1;
+    ja.common.act.enums.ActSubscribeStatusEnum subscribeStatus = 2;
+}
+
+
+message CountSubscribeActByUidReq {
+    google.protobuf.Any head = 1;
+    int64 uid = 2;
+}
+
+message CountSubscribeActByUidResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+message ListSubscribeActByUidReq {
+    google.protobuf.Any head = 1;
+    int64 uid = 2;
+    int32 offset = 3;
+    int32 size = 4;
+}
+
+message ListSubscribeActByUidResp {
+    google.protobuf.Any head = 1;
+    repeated ActSubscribeBo infoList = 2;
+}
+
+message UnSubscribeActReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    int64 uid = 3;
+}
+
+message UnSubscribeActResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;            //true:处理成功  false:处理失败
+}
+
+message SubscribeActReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    int64 uid = 3;
+}
+
+message SubscribeActResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;            //true:处理成功  false:处理失败
+}
+
+
+

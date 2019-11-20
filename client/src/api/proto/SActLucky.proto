@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "ActCommonEnum.proto";
+import "SActDomain.proto";
+
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+service SActLucky {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.act_srv";
+    option (poet.ex_service_rpc_project) = "common.actbase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 活动--中奖名单--运营后台--摇奖--设置活动的中奖名单(一期：暂不实现)
+    rpc MakeLucky(MakeLuckyReq) returns(MakeLuckyResp){}
+
+    // 活动--中奖名单--运营后台--录入中奖名单
+    rpc AddActLucky(AddLuckyReq) returns(AddLuckyResp){}
+
+    // 活动--中奖名单--运营后台--中奖名单总数
+    rpc CountActLucky(CountActLuckyReq) returns(CountActLuckyResp){}
+
+    // 活动--中奖名单--运营后台--中奖名单列表
+    rpc ListActLucky(ListActLuckyReq) returns(ListActLuckyResp){}
+
+    // 活动--中奖名单--运营后台--更新奖品的兑换状态
+    rpc UpdateActLuckyStatus(UpdateActLuckyStatusReq) returns(UpdateActLuckyStatusResp){}
+
+    // 活动--中奖名单--运营后台/小程序--查询某个用户、在某个活动中的中奖结果（未中奖、已中奖的奖品信息、奖品过期情况）
+    rpc GetActLuckyStatusByUid(GetActLuckyStatusByUidReq) returns(GetActLuckyStatusByUidResp){}
+
+
+}
+
+
+message AddLuckyReq {
+    google.protobuf.Any head = 1;
+    int64 operUid = 2;      //操作者id
+    int64 actId = 3;        //活动id
+    int64 uid = 4;          //中奖名单用户uid
+    int64 awardId = 5;      //活动奖品记录id
+}
+
+message AddLuckyResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+message GetActLuckyStatusByUidReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    int64 uid = 3;
+}
+
+message GetActLuckyStatusByUidResp {
+    google.protobuf.Any head = 1;
+    repeated ActLuckyBo infoList = 2;
+}
+
+
+message UpdateActLuckyStatusReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    int64 awardId = 3;
+    ja.common.act.enums.ActPresentStateEnum actPresentState = 4;
+    int64 operUid = 5;
+}
+
+message UpdateActLuckyStatusResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+
+message ListActLuckyReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    ja.common.act.enums.ActPresentStateEnum presentState = 3;
+    int32 offset = 5;
+    int32 size = 6;
+}
+
+message ListActLuckyResp {
+    google.protobuf.Any head = 1;
+    repeated ActLuckyBo infoList = 2;
+}
+
+message CountActLuckyReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    ja.common.act.enums.ActPresentStateEnum presentState = 3;
+}
+
+message CountActLuckyResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+message MakeLuckyReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    int64 operUid = 3;
+    ja.common.act.enums.ActAwardTypeEnum actAwardType = 4;
+}
+
+message MakeLuckyResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+
+

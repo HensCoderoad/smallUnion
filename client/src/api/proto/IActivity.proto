@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "SActivityDomain.proto";
+
+package ja.api.activity;
+
+option java_multiple_files = false;
+
+service IActivity {
+	option (poet.ex_service_type) = "api";
+	option (poet.ex_service_handler_project) = "api.activity_api";
+
+	// 小程序端--获取/生成我的活动邀请码 ok
+	rpc GetActivityCode(GetActivityCodeReq) returns(GetActivityCodeResp){}
+	// 小程序端--获取我的活动邀请码状态	ok
+	rpc GetActivityCodeStatus(GetActivityCodeStatusReq) returns(GetActivityCodeStatusResp){}
+	// 小程序端--申请入驻
+	rpc ApplyAuthor(ApplyAuthorReq) returns(ApplyAuthorResp){}
+	// 小程序端--获取我的收益流水	ok
+	rpc ListRewardItems(ListRewardItemsReq) returns(ListRewardItemsResp){}
+	// 小程序端--获取分享文案	ok
+	rpc GetShareText(GetShareTextReq) returns(GetShareTextResp){}
+
+	// 小程序端--查询用户申请的状态
+	rpc GetApplyStatusByUid(GetApplyStatusByUidReq) returns(GetApplyStatusByUidResp){}
+
+	// 小程序端/web后台--查看认证号收益总额	ok
+	rpc GetRewardTotal(GetRewardTotalReq) returns(GetRewardTotalResp){}
+	// web后台--查看某公众号收益数据，以受邀请认证号为维度
+	rpc ListRewardGroupByAuthor(ListRewardGroupByAuthorReq) returns(ListRewardGroupByAuthorResp){}
+	// web后台--查看推荐人公众号邀请的认证号入驻情况
+	rpc GetAuthorApplyStat(GetAuthorApplyStatReq) returns(GetAuthorApplyStatResp){}
+
+	// 小程序--获取当前认证号推荐白名单资格的状态
+	rpc GetApplyListType(GetApplyListTypeReq) returns(GetApplyListTypeResp){}
+}
+
+// 小程序--获取当前认证号推荐白名单资格的状态
+message GetApplyListTypeReq {
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+}
+
+message GetApplyListTypeResp {
+	google.protobuf.Any head = 1;
+	ja.common.activity.ActListTypeEnum actListType = 2;	//黑白名单类型 -1=已禁用白名单 1=白名单  2=黑名单
+}
+
+//小程序端--查询用户申请的状态
+message GetApplyStatusByUidReq {
+	google.protobuf.Any head = 1;
+	int64 uid = 2;
+}
+
+message GetApplyStatusByUidResp {
+	google.protobuf.Any head = 1;
+	int32 status = 2;    // 1=待审核  2=通过  3=不通过  4=用户已有认证号  5=没认证号，也没提交过申请
+}
+
+message GetActivityCodeReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+}
+
+message GetActivityCodeResp{
+	google.protobuf.Any head = 1;
+	string code = 2;
+}
+
+message GetActivityCodeStatusReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+}
+
+message GetActivityCodeStatusResp{
+	google.protobuf.Any head = 1;
+	ja.common.activity.ShortCodeStatusEnum state = 2;
+}
+
+message ApplyAuthorReq{
+	google.protobuf.Any head = 1;
+	ja.common.activity.ApplyAuthorBo info = 2;	// 提交的入驻信息
+	string checkNum = 3;						// 邀请码
+	string verifyCode = 4;             			// 手机验证码
+}
+
+message ApplyAuthorResp{
+	google.protobuf.Any head = 1;
+}
+
+message ListRewardItemsReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+	int64 offset = 3;
+	int32 count = 4;
+}
+
+message RewardItemVo{
+	int64 aid = 1;			// 认证号id
+	string authorName = 2;	// 认证号名称
+	string rewardName = 3;	// 奖励名称
+	int32 reward = 4;		// 奖励金额
+	int64 rewardId = 5;		// 奖励id
+}
+
+message ListRewardItemsResp{
+	google.protobuf.Any head = 1;
+	repeated RewardItemVo item = 2;
+	int64 next = 3;
+}
+
+message GetShareTextReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+}
+
+message GetShareTextResp{
+	google.protobuf.Any head = 1;
+    ja.common.activity.ShareTextBo info = 2;
+}
+
+message GetRewardTotalReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;
+}
+
+message GetRewardTotalResp{
+	google.protobuf.Any head = 1;
+	int32 total = 2;
+}
+
+message ListRewardGroupByAuthorReq{
+	google.protobuf.Any head = 1;
+	int64 recommendAid = 2;					// 邀请人的aid
+	int64 offset = 3;
+	int32 count = 4;
+}
+
+message RewardGroupByAuthorVo{
+	int64 aid = 1;							// 入驻的认证号aid
+	string authorName = 2;					// 入驻的认证号名称
+	ja.common.activity.ApplyAuthorStatusEnum state = 3;	// 入驻审核状态
+	int32 authorEnterRewardAmount = 4;					// 入驻奖励金额
+	int32 authorVideoRewardAmount = 5;					// 首发文奖励金额
+	int32 authorSevenDaysVideoRewardAmount = 6;			// 7天发文奖励金额
+	int32 authorSevenDaysVideoCount = 7;				// 7天发文达标数量
+
+}
+
+message ListRewardGroupByAuthorResp{
+	google.protobuf.Any head = 1;
+	repeated RewardGroupByAuthorVo item = 2;
+	int64 next = 3;
+}
+
+message GetAuthorApplyStatReq{
+	google.protobuf.Any head = 1;
+	int64 aid = 2;									// 邀请人的公众号aid
+}
+
+message GetAuthorApplyStatResp{
+	google.protobuf.Any head = 1;
+	int32 total = 2;                            // 总申请数量
+	int32 wait = 3;                             // 等待审批数量
+	int32 pass = 4;                             // 已通过数量
+	int32 refused = 5;                           // 未通过数量
+}

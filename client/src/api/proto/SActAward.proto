@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+
+import "GoodsCommonEnum.proto";
+import "SCommonDomain.proto";
+import "SActDomain.proto";
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+service SActAward {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.act_srv";
+    option (poet.ex_service_rpc_project) = "common.actbase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 活动--活动奖品--运营后台--添加活动的奖品
+    rpc AddActAward(AddActAwardReq) returns(AddActAwardResp){}
+
+    //活动--活动奖品--运营后台--查询某个活动的奖品列表分页
+    rpc ListActAward(ListActAwardReq) returns(ListActAwardResp){}
+
+    //活动--活动奖品--运营后台--查询某个活动的奖品总个数
+    rpc CountActAward(CountActAwardReq) returns(CountActAwardResp){}
+
+    //活动--活动奖品--运营后台--删除某个活动的某个/或多个奖品
+    rpc DeleteActAward(DeleteActAwardReq) returns(DeleteActAwardResp){}
+}
+
+
+message AddActAwardReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;            //活动id
+    int64 ruleId = 3;           //活动奖品的规则id
+    int64 goodsId = 4;          //商品id(可空)
+    int64 goodsItemId = 5;      //商品物件id
+    string extend = 6;          //扩展信息(可空)
+    int64 operUid = 7;          //操作者id
+}
+
+
+message AddActAwardResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+//注：活动的奖品只作软删除
+message DeleteActAwardReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    repeated int64 awardId = 3;
+    int64 operUid = 4;
+}
+
+message DeleteActAwardResp {
+    google.protobuf.Any head = 1;
+    CommonLongResultBo info = 2;
+}
+
+
+message CountActAwardReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    ja.common.goods.enums.GoodsItemStatusEnum goodsItemStatus = 3;
+
+}
+
+message CountActAwardResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+
+message ListActAwardReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+    ja.common.goods.enums.GoodsItemStatusEnum goodsItemStatus = 3;
+    int32 offset = 4;
+    int32 size = 5;
+}
+
+message ListActAwardResp {
+    google.protobuf.Any head = 1;
+    repeated ActAwardBo infoList = 2;
+}
+
+
+

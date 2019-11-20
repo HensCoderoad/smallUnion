@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "SWorksDomain.proto";
+import "SWorksDomainAuthor.proto";
+
+
+
+package ja.common.works;
+
+option java_multiple_files = false;
+
+service SWorksAuthor {
+	option (poet.ex_service_type) = "srv";
+	option (poet.ex_service_handler_project) = "srv.works_srv";
+	option (poet.ex_service_rpc_project) = "common.worksbase";
+
+	//认证号--运营后台--批设置认证号的业务标签小分类
+	rpc BatchSetAuthorLabelType(BatchSetAuthorLabelTypeReq) returns(BatchSetAuthorLabelTypeesp){}
+
+	// 获取认证的公众号的认证信息
+	rpc GetAuthorsAuthInfoNew(GetAuthorsAuthInfoNewReq) returns(GetAuthorsAuthInfoNewResp){}
+
+	// 供运营后台人员使用的更新公众号信息的服务
+	rpc UpdateAuthorAuthInfoNew(UpdateAuthorAuthInfoNewReq) returns(UpdateAuthorAuthInfoNewResp){}
+
+	// 按照发文数量查找认证号
+	rpc ListAuthorsByPubCount(ListAuthorsByPubCountReq) returns(ListAuthorsByPubCountResp){}
+}
+
+//认证号--运营后台--批量设置认证号的业务标签小分类
+message BatchSetAuthorLabelTypeReq{
+	google.protobuf.Any head = 1;	//请求头
+    int64 operUid = 2;		        //操作者id
+	repeated int64 aid = 3;		//认证号aid
+	AuthorLabelTypeEnum authorLabelType = 4;	//子分类标签 0=普通认证号  1=公众号 2=商务合作  3=外部招募  10=运营内部认证号   11=爬虫内部认证号
+}
+
+message BatchSetAuthorLabelTypeesp{
+	google.protobuf.Any head = 1;	//请求头
+	CommonLongBatchResultBo result = 2;		//处理结果
+}
+
+message ListAuthorsByPubCountReq{
+	// 排序字段
+	enum SortField{
+		reserveDef = 0;
+		pubcount = 1;
+	}
+	google.protobuf.Any head = 1;
+	string authorname = 2;				// 认证号名称,模糊匹配
+	int32 pubcountStart = 3;			// 发文数量的起始数
+	int32 pubcountEnd = 4;				// 发文数量的终止数
+	int64 pubtimeStart = 5;				// 发文起始时间
+	int64 pubtimeEnd = 6;				// 发文结束时间
+	SortField sort = 7;					// 排序字段
+	bool asc = 8;						// 升序降序
+	AuthorLabelTypeEnum authorLabelType = 9;	// 公众号属性
+	int64 categoryid = 10;
+}
+
+message ListAuthorsByPubCountResp{
+	google.protobuf.Any head = 1;
+	repeated AuthorPubInfoBo author = 2;
+}
+
+message GetAuthorsAuthInfoNewReq{
+	enum ConditionTarget{
+		authorName = 0;		// 公众号名称
+		uid = 1;			// 用户id
+	}
+	google.protobuf.Any head = 1;
+	string condition = 2;					// 条件
+	int32 offset = 3;						// 记录起始位置
+	int32 count = 4;						// 获取的记录数量
+	int32 state = 5;						// 0=正常，1=停用
+	ConditionTarget target = 6;				// 查询条件的目标
+	int64 startdate = 7;					// 开始日期
+	int64 enddate = 8;						// 结束日期
+	int64 categoryid = 9;					// 领域id
+	SearchAuthorLabelTypeEnum authorLabelType = 10;	// 认证号属性
+}
+
+message GetAuthorsAuthInfoNewResp {
+	google.protobuf.Any head = 1;
+	repeated AuthorAuthBo info = 2;		// 认证主体列表
+	int32 next = 3;							// 下一批数据的起始位置
+}
+
+message UpdateAuthorAuthInfoNewReq{
+	google.protobuf.Any head = 1;
+	string aid = 2;							// 公众号id
+	string headimage = 3;                   // 头像，为空表示设置成默认头像
+	string name = 4;                        // 名称
+	string note = 5;                        // 简介
+	string phone = 6;						// 联系人电话
+	string wxno = 7;						// 联系人微信号
+	int64 opuid = 8;						// 操作人的用户id
+	AuthorWeightLevelEnum weightlevel = 9;		// 优先级
+	repeated int64 category = 10;			//领域id（多个用英文逗号隔开）
+	AuthorLabelTypeEnum authorLabelType = 11;		// 认证号属性
+}
+
+message UpdateAuthorAuthInfoNewResp{
+	google.protobuf.Any head = 1;
+}

@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+
+import "SCommonDomain.proto";
+import "GoodsCommonEnum.proto";
+import "SGoodsDomain.proto";
+
+package ja.common.goods;
+
+option java_multiple_files = false;
+
+service SGoods {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.goods_srv";
+    option (poet.ex_service_rpc_project) = "common.goodsbase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 活动--商品库--运营后台--查询商品列表分页
+    rpc ListGoods(ListGoodsReq) returns(ListGoodsResp){}
+
+    //活动--商品库--运营后台--查询商品列表总数
+    rpc CountGoods(CountGoodsReq) returns(CountGoodsResp){}
+
+    //活动--商品库--运营后台--新增商品
+    rpc AddGoods(AddGoodsReq) returns(AddGoodsResp){}
+
+    //活动--商品库--运营后台--修改商品
+    rpc UpdateGoods(UpdateGoodsReq) returns(UpdateGoodsResp){}
+
+    //活动--商品库--运营后台--删除商品
+    rpc DeleteGoods(DeleteGoodsReq) returns(DeleteGoodsResp){}
+
+    //活动--商品库--运营后台--查看单个商品详情
+    rpc GetGoods(GetGoodsReq) returns(GetGoodsResp){}
+
+    //活动--商品库--运营后台--查看多个商品详情
+    rpc GetMultiGoods(GetMultiGoodsReq) returns(GetMultiGoodsResp){}
+
+    //活动--商品库--运营后台--调整商品状态
+    rpc ChangeGoodsStatus(ChangeGoodsStatusReq) returns(ChangeGoodsStatusResp){}
+}
+
+
+message GetMultiGoodsReq {
+    google.protobuf.Any head = 1;
+    repeated int64 id = 2;
+}
+
+message GetMultiGoodsResp{
+    google.protobuf.Any head = 1;
+    map<int64, GoodsBo> infoMap = 2;
+}
+
+message ChangeGoodsStatusReq {
+    google.protobuf.Any head = 1;
+    repeated int64 id = 2;
+    ja.common.goods.enums.GoodsStatusEnum goodsStatus = 3;
+    int64 operUid = 4;
+}
+
+message ChangeGoodsStatusResp {
+    google.protobuf.Any head = 1;
+    CommonLongResultBo info = 2;
+}
+
+message GetGoodsReq {
+    google.protobuf.Any head = 1;
+    int64 id = 2;
+}
+
+message GetGoodsResp {
+    google.protobuf.Any head = 1;
+    GoodsBo info = 2;
+}
+
+
+message DeleteGoodsReq {
+    google.protobuf.Any head = 1;
+    repeated int64 id = 2;
+    int64 operUid = 3;
+}
+
+message DeleteGoodsResp {
+    google.protobuf.Any head = 1;
+    CommonLongResultBo info = 2;
+}
+
+message UpdateGoodsReq {
+    google.protobuf.Any head = 1;
+    GoodsBo info = 2;
+    int64 operUid = 3;
+}
+
+message UpdateGoodsResp {
+    google.protobuf.Any head = 1;
+    bool result = 2;
+}
+
+message AddGoodsReq {
+    google.protobuf.Any head = 1;
+    GoodsBo info = 2;
+    int64 operUid = 3;
+}
+
+message AddGoodsResp {
+    google.protobuf.Any head = 1;
+    int64 goodsId = 2;
+}
+
+
+message CountGoodsReq {
+    google.protobuf.Any head = 1;
+    string name = 2;
+    ja.common.goods.enums.GoodsStatusEnum goodsStatus = 3;
+    int32 beginTime = 4;
+    int32 endTime = 5;
+}
+
+message CountGoodsResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+
+message ListGoodsReq {
+    google.protobuf.Any head = 1;
+    string name = 2;
+    ja.common.goods.enums.GoodsStatusEnum goodsStatus = 3;
+    int32 beginTime = 4;
+    int32 endTime = 5;
+    int32 offset = 6;
+    int32 size = 7;
+}
+
+message ListGoodsResp {
+    google.protobuf.Any head = 1;
+    repeated GoodsBo infoList = 2;
+}

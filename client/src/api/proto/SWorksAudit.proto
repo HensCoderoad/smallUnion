@@ -1,0 +1,673 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "SWorksDomainAudit.proto";
+
+package ja.common.works;
+
+option java_multiple_files = false;
+
+service SWorks {
+	option (poet.ex_service_type) = "srv";
+	option (poet.ex_service_handler_project) = "srv.works_srv";
+	option (poet.ex_service_rpc_project) = "common.worksbase";
+
+    //作品---查询各种状态的总数
+    rpc CountWorksByStatus(CountWorksByStatusReq) returns (CountWorksByStatusResp){};
+
+    //作品---查询各种状态的列表
+    rpc ListWorksByStatus(ListWorksByStatusReq) returns (ListWorksByStatusResp){};
+
+    //作品---单个审核操作
+    rpc AuditWorks(AuditWorksReq) returns (AuditWorksResp){};
+
+    //作品---批量审核操作
+    rpc BatchAuditWorks(BatchAuditWorksReq) returns (BatchAuditWorksResp){};
+
+    //作品---批量删除操作
+    rpc BatchDeleteWorks(BatchDeleteWorksReq) returns (BatchDeleteWorksResp){};
+
+    //作品---查询各种状态的作品id数量(从db获取)
+    rpc CountVidsByAid(CountVidsByAidReq) returns (CountVidsByAidResp){};
+
+    //作品---查询各种状态的作品id列表，支持分页(从db获取)
+    rpc ListVidsByAid(ListVidsByAidReq) returns (ListVidsByAidResp){};
+
+    //作品审核二期接口#######################################################
+    //作品---设置审核开关
+    rpc SetAuditSwitch(SetAuditSwitchReq) returns (SetAuditSwitchResp){};
+
+    //作品---查询审核开关
+    rpc ListAuditSwitch(ListAuditSwitchReq) returns (ListAuditSwitchResp){};
+
+    //作品---查询当前的审核开关
+    rpc GetAuditSwitch(GetAuditSwitchReq) returns (GetAuditSwitchResp){};
+
+    //作品---批量添加认证主体审核白名单/黑名单
+    rpc BatchAddAuthorWhiteBlack(BatchAddAuthorWhiteBlackReq) returns (BatchAddAuthorWhiteBlackResp){};
+
+    //作品---批量删除认证主体审核白名单/黑名单
+    rpc BatchDeleteAuthorWhiteBlack(BatchDeleteAuthorWhiteBlackReq) returns (BatchDeleteAuthorWhiteBlackResp){};
+
+    //作品---查询认证主体审核白名单/黑名单(分页)
+    rpc ListAuthorWhiteBlack(ListAuthorWhiteBlackReq) returns (ListAuthorWhiteBlackResp){};
+
+    //作品---查询认证主体审核白名单/黑名单总个数
+    rpc CountAuthorWhiteBlack(CountAuthorWhiteBlackReq) returns (CountAuthorWhiteBlackResp){};
+
+    //作品---批量上架/下架C类审核记录
+    rpc BatchUpDownVideos(BatchUpDownVideosReq) returns (BatchUpDownVideosResp){};
+
+    //作品---查询C类作品列表
+    rpc ListWorksByMark(ListWorksByMarkReq) returns (ListWorksByMarkResp){};
+
+    //作品---查询C类作品总个数
+    rpc CountWorksByMark(CountWorksByMarkReq) returns (CountWorksByMarkResp){};
+
+    //作品---批量查询认证主体的白黑名单状态
+    rpc BatchGetAuthorWhiteBlack(BatchGetAuthorWhiteBlackReq) returns (BatchGetAuthorWhiteBlackResp){};
+    
+    /////作品评级相关接口
+    //作品评级--批量查询C类作品
+    rpc BatchGetCVideo(BatchGetCVideoReq) returns (BatchGetCVideoResp){};
+
+    //作品评级--设置S级、A级、B级的评级基准
+    rpc SetWorkGradeConf(SetWorkGradeConfReq) returns (SetWorkGradeConfResp){};
+
+    //作品评级--查询单个评级S级、A级、B级的评级基准信息
+    rpc GetWorkGradeConf(GetWorkGradeConfReq) returns (GetWorkGradeConfResp){};
+
+    //作品评级--批量获取各评级的作品总数（S级、A级、B级）
+    rpc BatchGetWorkGradeVids(BatchGetWorkGradeVidsReq) returns (BatchGetWorkGradeVidsResp){};
+
+    //作品评级--查询所有S级、A级、B级的评级基准
+    rpc ListAllWorkGradeConf(ListAllWorkGradeConfReq) returns (ListAllWorkGradeConfResp){};
+
+    //作品评级--设置作品评级c类推荐开关
+    rpc SetWorkGradeMarkC(SetWorkGradeMarkCReq) returns (SetWorkGradeMarkCResp){};
+
+    //作品评级--查询作品评级c类推荐开关信息
+    rpc GetWorkGradeMarkC(GetWorkGradeMarkCReq) returns (GetWorkGradeMarkCResp){};
+
+    //作品评级--给单个作品评级处理
+    rpc SetSingleWorkGrade(SetSingleWorkGradeReq) returns (SetSingleWorkGradeResp){};
+
+    //作品评级--批量取消多个作品的评级
+    rpc BatchCancelWorkGrade(BatchCancelWorkGradeReq) returns (BatchCancelWorkGradeResp){};
+
+    //作品评级--批量获取多个作品的评级信息
+    rpc BatchGetWorksGrade(BatchGetWorksGradeReq) returns (BatchGetWorksGradeResp){};
+
+    //作品评级--批量通知多个作品的上推荐/下推荐
+    rpc BatchUpDownRecommendByVids(BatchUpDownRecommendByVidsReq) returns (BatchUpDownRecommendByVidsResp){};
+
+    //作品评级--待评级、S级、A级、B级、已完成的各tab页分页列表
+    rpc ListWorksByGrade(ListWorksByGradeReq) returns (ListWorksByGradeResp){};
+
+    //作品评级--待评级、S级、A级、B级、已完成的各tab页总数
+    rpc CountWorksByGrade(CountWorksByGradeReq) returns (CountWorksByGradeResp){};
+
+    //作品评级--某天已分发的曝光量总计
+    rpc GetTotalExposure(GetTotalExposureReq) returns (GetTotalExposureResp){};
+
+
+}
+
+////作品审核状态  0=待审核  1=已通过  2=不通过
+//enum WorksAuditStatus{
+//    WAITING_AUDIT = 0;              // 待审核
+//    PASS_OK = 1;                    // 已通过
+//    NOT_PASS = 2;                   // 不通过
+//}
+//
+//// 作品的类型
+//enum VideoType{
+//    video = 0;	// 视频
+//    audio = 1;	// 音频
+//}
+//
+////作品的可见状态(对于小程序最终用户是否可见)
+//enum VideoState{
+//    NORMAL = 0;	// 正常,可见
+//    HIDDEN = 1;	// 已下架,不可见
+//}
+//
+//enum SearchAuditStatus{
+//    SEARCH_WAITING_AUDIT = 0;              // 待审核
+//    SEARCH_PASS_OK = 1;                    // 已通过,但不标记
+//    SEARCH_NOT_PASS = 2;                   // 不通过
+//    SEARCH_PASS_AND_MARK = 3;              // 已通过,但标记
+//    SEARCH_PASS_ALL = 4;                   // 已通过(不管是否标记)
+//    SEARCH_NOT_PASS_AND_MARK = 5;          // c类已下架
+//    SEARCH_ALL = 6;                        // 全部
+//}
+//
+//enum AuditOperation{
+//    AUDIT_PASS = 0;                       // 通过
+//    AUDIT_PASS_AND_MARK = 1;              // 通过且标记
+//    AUDIT_PASS_UN_MARK = 2;               // 通过但取消标记
+//    AUDIT_OFF_LINE = 3;                   // 下架(不通过,需注明原因)
+//    AUDIT_REPORT = 4;                     // 举报(暂时不处理)
+//    AUDIT_RECOVER_ONLINE = 5;             // 恢复上架
+//}
+//
+////作品评级相关   0=待评级   1=S级  2=A级  3=B级 4=C类  5=评级已完成 6=所有
+//enum SearchGradeType{
+//    SEARCH_GRADE_WAITING = 0;             // 待评级
+//    SEARCH_GRADE_S = 1;                   // A级
+//    SEARCH_GRADE_A = 2;                   // B级
+//    SEARCH_GRADE_B = 3;                   // S级
+//    SEARCH_TYPE_C = 4;                   // C类
+//    SEARCH_GRADE_FINISHED = 5;            // 已完成
+//    SEARCH_GRADE_ALL = 6;                 // 所有(目前只包括被推荐的作品)
+//    SEARCH_GRADE_D = 7;                 // D级
+//}
+//
+//enum GradeType{
+//    GRADE_WAITING = 0;       // 0=待评级
+//    GRADE_A = 1;             // 1=A级
+//    GRADE_B = 2;             // 2=B级
+//    GRADE_S = 3;             // 3=S级
+//    GRADE_D = 4;             // 4=D级
+//}
+//
+//message VideoAuditBo{
+//    string vid = 1;				        // 作品id
+//    int64 aid = 2;                     //所属认证主体aid
+//    string author_name = 3;	    	   // 认证主体的名称
+//    string video_title = 4;           //作品标题
+//    VideoType video_type = 5;	       // 作品类型
+//    VideoState video_state = 6;        //作品状态   0=正常可见，1=不可见(已下架)
+//    string video_url = 7;		       // 作品的音视频地址
+//    string cover_url = 8;		       // 作品的封面地址
+//    int32 create_time = 9;           //创建时间
+//    int32 update_time = 10;           //修改时间(通常指同一个主体下的多人编辑同一作品时的编辑时间)
+//    int64 publish_time = 11;		   // 真正发布时间
+//    repeated int64 category = 12;     //作品的分类id集合
+//    WorksAuditStatus audit_status = 13; //作品审核状态  0=待审核  1=已通过  2=不通过
+//    int64 audit_time = 14;			   // 审核时间(对应上架/下架时间)
+//    int64 audit_uid = 15;             //审核人uid(运营后台的自身的用户id,不是音盟用户uid)
+//    string audit_mark = 16;           //审核说明(不通过时、下架时必填)
+//    string mark_type = 17;            //标记分类，目前暂时只有C类标记
+//    int64 uid = 18;                   //作品发布用户uid
+//}
+//
+////评级基准值配置
+//message WorkGradeConfBo {
+//    GradeType gradeType = 1;             //S级、A级、B级、D级
+//    int32 gradeValue = 2;               //各评级的基准值,比如 1000,2000
+//    int64 operUid  = 3;                 //运营人uid(运营后台的自身的用户id,不是音盟用户uid)
+//    int32 createTime = 4;               //创建时间,单位：秒
+//    int32 updateTime = 5;               //修改时间,单位：秒
+//}
+//
+//message VideoGradeBaseBo {
+//    string vid = 1;                     //作品vid
+//    int64 aid = 2;                      //认证号aid
+//    GradeType gradeType = 3;             //S级、A级、B级
+//    int32 gradeValue = 4;               //评级的值,比如 1000,2000(初开始来源评级所对应的值，但可自定义修改)
+//    int32 recommendMinLimit = 5;        //推荐最小暴光基数；当作品曝光量超过这个就是热门作品（目前是设置的B级所对应的暴光量） -1:不调整
+//    int32 recommendStatus = 6;          //作品是否已上推荐  1=上了推荐  2=下了推荐
+//    int32 pushTotal = 7;                //作品当前的推送量，从推荐服务同步过来的，会有延时
+//    int64 operUid  = 8;                 //运营人uid(运营后台的自身的用户id,不是音盟用户uid)
+//    int32 createTime = 9;               //创建时间,单位：秒
+//    int32 updateTime = 10;               //修改时间,单位：秒
+//}
+//
+//message VideoRatioBo {
+//    string vid = 1;                     //作品vid
+//    int64 aid = 2;                      //认证号aid
+//    int64 currentExposure = 10;         //当前曝光量(来自大数据es)
+//    string converRatio = 11;            //转化率(来自大数据es)
+//    string completeRatio = 12;          //完播转换率(来自大数据es)
+//}
+//
+//message VideoGradeBo{
+//    VideoGradeBaseBo gradeBaseBo = 1;
+//    VideoRatioBo ratioBo = 2;
+// }
+
+ //作品---查询各种状态的总数
+ message CountWorksByStatusReq {
+    google.protobuf.Any head = 1;
+    string author_name = 2;            //认证主体名称,关键字
+    string video_title = 3;            //作品标题，关键字
+    ja.common.works.domain.audit.SearchAuditStatus video_status = 4; //查询作品审核状态  0=待审核  1=已通过  2=不通过 3=标记并通过 4=全部
+    int32 ctime_begin = 5;				//查询开始时间,单位：秒
+    int32 ctime_end = 6;				//查询结束时间,单位：秒
+}
+
+message CountWorksByStatusResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;        			//满足查询条件的记录总数
+}
+
+//作品---查询各种状态的列表
+message ListWorksByStatusReq {
+    google.protobuf.Any head = 1;
+    string author_name = 2;            //认证主体名称,关键字
+    string video_title = 3;            //作品标题，关键字
+    ja.common.works.domain.audit.SearchAuditStatus video_status = 4; //查询作品审核状态  0=待审核  1=已通过  2=不通过 3=标记并通过 4=全部
+    int32 ctime_begin = 5;				//查询开始时间,单位：秒
+    int32 ctime_end = 6;				//查询结束时间,单位：秒
+    int32 page_no = 7;					//分页页码,从1开始
+    int32 page_size = 8;				//分页页码,默认10
+}
+
+message ListWorksByStatusResp {
+    google.protobuf.Any head = 1;
+    repeated ja.common.works.domain.audit.VideoAuditBo infos = 2; //列表，支持分页
+}
+
+//作品--审核操作
+message AuditWorksReq {
+    //作品--审核操作定义
+    google.protobuf.Any head = 1;
+    string vid = 2;                    //作品vid
+    int64 audit_uid = 3;               //审核人uid(运营后台的自身的用户id,不是音盟用户uid)
+    ja.common.works.domain.audit.AuditOperation audit_operation = 4; //作品审核状态  0=待审核  1=已通过  2=C类标记  3=已下架  4=被举报
+    string mark = 5;                   //审核说明(下架/举报/不推荐)
+    string mark_type = 6;              //标记类型,目前暂时只有C类,可空
+    repeated int64 category = 7;     //作品的分类id集合
+}
+
+message AuditWorksResp{
+    google.protobuf.Any head = 1;		// 响应头
+}
+
+
+//作品--批量审核操作
+message BatchAuditWorksReq {
+    google.protobuf.Any head = 1;
+    repeated string vid = 2;			// 作品vid列表
+    int64 audit_uid = 3;               //审核人uid(运营后台的自身的用户id,不是音盟用户uid)
+    ja.common.works.domain.audit.AuditOperation audit_operation = 4; //作品审核状态  0=待审核  1=已通过  2=C类标记  3=已下架  4=被举报
+    string mark = 5;                   //审核说明(下架/举报/不推荐)
+    string mark_type = 6;              //标记类型,目前暂时只有C类,可空
+    repeated int64 category = 7;      //作品的分类id集合
+}
+
+message BatchAuditWorksResp{
+    message AuditResult{
+        int32 success_num = 1;          // 成功数量
+        int32 fail_num = 2;             // 失败数量
+        repeated string fail_vid = 3;  // 失败的vid列表
+    }
+    google.protobuf.Any head = 1;		// 响应头
+    AuditResult result = 2;             // 操作结果
+}
+
+//作品--批量删除操作
+message BatchDeleteWorksReq{
+    google.protobuf.Any head = 1;
+    repeated string vid = 2;			// 作品vid列表
+    int64 audit_uid = 3;               //操作人uid(运营后台的自身的用户id,不是音盟用户uid)
+}
+
+message BatchDeleteWorksResp{
+    message DeleteResult{
+        int32 success_num = 1;          // 成功数量
+        int32 fail_num = 2;             // 失败数量
+        repeated string fail_vid = 3; // 失败的vid列表
+    }
+    google.protobuf.Any head = 1;		// 响应头
+    DeleteResult result = 2;            // 操作结果
+}
+
+
+//作品---查询各种状态的作品总数(从db获取)
+message CountVidsByAidReq {
+    google.protobuf.Any head = 1;
+    int64 aid = 2;                      //认证主体aid
+    ja.common.works.domain.audit.SearchAuditStatus video_status = 3; //查询作品审核状态  0=待审核  1=已通过  2=不通过 3=标记并通过 4=全部
+}
+
+message CountVidsByAidResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;        			//满足查询条件的记录总数
+}
+
+//作品---查询各种状态的作品总数，支持分页(从db获取)
+message ListVidsByAidReq {
+    google.protobuf.Any head = 1;
+    int64 aid = 2;                      //认证主体aid
+    ja.common.works.domain.audit.SearchAuditStatus video_status = 3; //查询作品审核状态  0=待审核  1=已通过  2=不通过 3=标记并通过 4=全部
+    int32 page_no = 4;					//分页页码,从1开始
+    int32 page_size = 5;				//分页页码,默认10
+}
+
+message ListVidsByAidResp {
+    google.protobuf.Any head = 1;
+    repeated string vids = 2;         //作品vid列表，支持分页
+}
+
+//作品审核开关-设置
+message SetAuditSwitchReq {
+    google.protobuf.Any head = 1;
+    ja.common.works.domain.audit.AuditSwitchBo auditSwitchBo = 2;   //审核开关信息bo
+}
+
+message SetAuditSwitchResp {
+    google.protobuf.Any head = 1;
+}
+
+//作品---查询审核开关
+message ListAuditSwitchReq {
+    google.protobuf.Any head = 1;
+}
+
+message ListAuditSwitchResp {
+    google.protobuf.Any head = 1;
+    repeated ja.common.works.domain.audit.AuditSwitchBo info = 2;   //审核开关信息bo
+}
+
+//作品---查询当前平台的审核开关
+message GetAuditSwitchReq {
+    google.protobuf.Any head = 1;
+}
+
+message GetAuditSwitchResp {
+    google.protobuf.Any head = 1;
+    ja.common.works.domain.audit.AuditSwitchBo info = 2;   //审核开关信息bo
+}
+
+//作品---批量添加认证主体审核白名单/黑名单
+message BatchAddAuthorWhiteBlackReq {
+    google.protobuf.Any head = 1;
+    int64 oper_uid = 2;                     //操作人id
+    ja.common.works.domain.audit.AuditAuthorListType auditAuthorListType = 3;  //认证号白名单/黑名单
+    repeated int64 aid = 4;             //认证主体aid列表
+}
+
+message BatchAddAuthorWhiteBlackResp {
+    google.protobuf.Any head = 1;		// 响应头
+    ja.common.works.domain.audit.BatchAuthorResult result = 2;            // 操作结果
+}
+
+//作品---批量删除认证主体审核白名单/黑名单
+message BatchDeleteAuthorWhiteBlackReq {
+    google.protobuf.Any head = 1;
+    int64 oper_uid = 2;                     //操作人id
+    ja.common.works.domain.audit.AuditAuthorListType auditAuthorListType = 3;  //认证号白名单/黑名单
+    repeated int64 aid = 4;             //认证主体aid列表
+}
+
+message BatchDeleteAuthorWhiteBlackResp {
+    google.protobuf.Any head = 1;		// 响应头
+    ja.common.works.domain.audit.BatchAuthorResult result = 2;            // 操作结果
+}
+
+//作品---查询认证主体审核白名单/黑名单(分页)
+message ListAuthorWhiteBlackReq {
+    google.protobuf.Any head = 1;
+    ja.common.works.domain.audit.AuditAuthorListType auditAuthorListType = 2;        //所有、白名单、黑名单
+    string author_name = 3;            //认证主体名称,关键字
+    int64 aid = 4;                  //认证号aid
+    int64 oper_uid  = 5;            //操作人id
+    int32 ctime_begin = 6;				//查询开始时间,单位：秒
+    int32 ctime_end = 7;				//查询结束时间,单位：秒
+    int32 page_no = 8;					//分页页码,从1开始
+    int32 page_size = 9;				//分页页码,默认10
+}
+
+message ListAuthorWhiteBlackResp {
+    google.protobuf.Any head = 1;
+    repeated ja.common.works.domain.audit.AuthorWhiteBlackBo infos = 2; //列表，支持分页
+}
+
+//作品---查询认证主体审核白名单/黑名单总个数
+message CountAuthorWhiteBlackReq {
+    google.protobuf.Any head = 1;
+    ja.common.works.domain.audit.AuditAuthorListType auditAuthorListType = 2;         //所有、白名单、黑名单
+    string author_name = 3;                             //认证主体名称,关键字
+    int64 aid = 4;                                      //认证号aid
+    int64 oper_uid  = 5;                                //操作人id
+    int32 ctime_begin = 6;				                //查询开始时间,单位：秒
+    int32 ctime_end = 7;				                //查询结束时间,单位：秒
+}
+
+message CountAuthorWhiteBlackResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2; //总数
+}
+
+
+//作品---批量查询认证主体白黑名单状态
+message BatchGetAuthorWhiteBlackReq {
+    google.protobuf.Any head = 1;
+    repeated int64 aid = 2;                  //认证号aid
+}
+
+message BatchGetAuthorWhiteBlackResp {
+    google.protobuf.Any head = 1;
+    map<int64, ja.common.works.domain.audit.AuditAuthorListType> info = 2;
+}
+
+//作品---批量上架/下架C类审核记录
+message BatchUpDownVideosReq {
+    google.protobuf.Any head = 1;
+    string mark = 2;                        //c类审核的原因
+    ja.common.works.domain.audit.AuditOperation auditOperation = 3;       //审核操作，这里只支持：上架/下架
+    int64 oper_uid  = 4;                    //操作人id
+    repeated string vid = 5;               //批量操作的作品vid列表(当它为空时，表示对所有指定C类作品进行操作)
+}
+
+message BatchUpDownVideosResp {
+    message UpDownVideoResult{
+        int32 success_num = 1;          // 成功数量
+        int32 fail_num = 2;             // 失败数量
+        repeated string fail_vid = 3; // 失败的vid列表
+    }
+    google.protobuf.Any head = 1;		// 响应头
+    UpDownVideoResult result = 2;            // 操作结果
+}
+
+//作品---查询C类列表
+message ListWorksByMarkReq {
+    google.protobuf.Any head = 1;
+    string mark = 2;                   //审核说明,关键字
+    string mark_type = 3;             //C类
+    ja.common.works.domain.audit.SearchAuditStatus video_status = 4; //查询作品审核状态  0=待审核  1=已通过  2=不通过 3=标记并通过 4=全部
+    int32 ctime_begin = 5;				//查询开始时间,单位：秒
+    int32 ctime_end = 6;				//查询结束时间,单位：秒
+    int32 page_no = 7;					//分页页码,从1开始
+    int32 page_size = 8;				//分页页码,默认10
+}
+
+message ListWorksByMarkResp {
+    google.protobuf.Any head = 1;
+    repeated ja.common.works.domain.audit.VideoAuditBo infos = 2; //列表，支持分页
+}
+
+//作品---查询C类总个数
+message CountWorksByMarkReq {
+    google.protobuf.Any head = 1;
+    string mark = 2;                   //审核说明,关键字
+    string mark_type = 3;             //C类
+    ja.common.works.domain.audit.SearchAuditStatus video_status = 4; //查询作品审核状态  0=待审核  1=已通过  2=不通过 3=标记并通过 4=全部
+    int32 ctime_begin = 5;				//查询开始时间,单位：秒
+    int32 ctime_end = 6;				//查询结束时间,单位：秒
+}
+
+message CountWorksByMarkResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;            //总个数
+}
+
+////作品评级相关接口////////////////////////////////////////////////////////
+message BatchGetCVideoReq{
+    google.protobuf.Any head = 1;
+    repeated string vids = 2;
+}
+message BatchGetCVideoResp{
+    google.protobuf.Any head = 1;
+    repeated string vids = 2;
+}
+
+//作品评级--设置各评级的基准值
+message SetWorkGradeConfReq{
+    google.protobuf.Any head = 1;
+    ja.common.works.domain.audit.WorkGradeConfBo workGradeConfBo = 2;
+}
+
+message SetWorkGradeConfResp{
+    google.protobuf.Any head = 1;
+}
+
+//作品评级--获取单个作品评级基准值
+message GetWorkGradeConfReq{
+    google.protobuf.Any head = 1;
+    ja.common.works.domain.audit.GradeType gradeType = 2;             //S级、A级、B级
+}
+
+message GetWorkGradeConfResp{
+    google.protobuf.Any head = 1;
+    ja.common.works.domain.audit.WorkGradeConfBo workGradeConfBo = 2;
+}
+
+//作品评级--设置评级的c类开关
+message SetWorkGradeMarkCReq{
+    google.protobuf.Any head = 1;
+    int32 switchFlag = 2;               //0=关闭  1=开启
+    int64 operUid  = 3;                 //运营人uid(运营后台的自身的用户id,不是音盟用户uid)
+}
+
+message SetWorkGradeMarkCResp{
+    google.protobuf.Any head = 1;
+}
+
+//作品评级--获取评级的c类开关
+message GetWorkGradeMarkCReq{
+    google.protobuf.Any head = 1;
+}
+
+message GetWorkGradeMarkCResp{
+    google.protobuf.Any head = 1;
+    int32 switchFlag = 2;               //0=关闭  1=开启
+    int64 operUid  = 3;                 //运营人uid(运营后台的自身的用户id,不是音盟用户uid)
+    int32 createTime = 5;				//创建时间,单位：秒
+    int32 updateTime = 6;				//修改时间,单位：秒
+}
+
+//作品评级--批量获取各评级的作品总数
+message BatchGetWorkGradeVidsReq{
+    google.protobuf.Any head = 1;
+    repeated ja.common.works.domain.audit.GradeType gradeType = 2;
+}
+
+message GradeTypeVidsBo{
+    ja.common.works.domain.audit.GradeType gradeType = 1;
+    int32 vidNum = 2;
+}
+
+message BatchGetWorkGradeVidsResp{
+    google.protobuf.Any head = 1;
+    repeated GradeTypeVidsBo gradeTypeVidsBo = 2;  //各评级的作品总数
+}
+
+//作品评级--各评级的基准值列表
+message ListAllWorkGradeConfReq{
+    google.protobuf.Any head = 1;
+}
+
+message ListAllWorkGradeConfResp{
+    google.protobuf.Any head = 1;
+    repeated ja.common.works.domain.audit.WorkGradeConfBo infos = 2;
+}
+
+//作品评级--设置单个作品评级
+message SetSingleWorkGradeReq{
+    google.protobuf.Any head = 1;
+    ja.common.works.domain.audit.VideoGradeBaseBo videoGradeBaseBo = 2; //作品评级基本信息
+}
+
+message SetSingleWorkGradeResp{
+    google.protobuf.Any head = 1;
+}
+
+//作品评级--批量取消多个作品的评级
+message BatchGradeResult{
+    int32 success_num = 1;          // 成功数量
+    int32 fail_num = 2;             // 失败数量
+    repeated string fail_vid = 3; // 失败的vid列表
+}
+
+message BatchCancelWorkGradeReq{
+    google.protobuf.Any head = 1;
+    int64 operUid = 2;                  //操作人id
+    repeated string vid = 3;           //作品vid列表
+}
+
+message BatchCancelWorkGradeResp{
+    google.protobuf.Any head = 1;
+    BatchGradeResult ret = 2;
+}
+
+//作品评级--批量对作品上推荐/下推荐时，通知推荐服务，同时修改es索引
+message BatchUpDownRecommendByVidsReq{
+    google.protobuf.Any head = 1;
+    int32 recommendStatus = 2;          //作品是否已上推荐  1=上了推荐  2=下了推荐
+    repeated string vid = 3;           //作品vid列表
+}
+
+message BatchUpDownRecommendByVidsResp{
+    google.protobuf.Any head = 1;
+    BatchGradeResult ret = 2;
+}
+
+//作品评级--批量获取多个作品的评级信息
+message BatchGetWorksGradeReq {
+    google.protobuf.Any head = 1;
+    repeated string vid = 2;                  //作品vid列表
+    int32 infoFlag = 3;                        //0=评级信息  1=转化率信息  2=评级+转化率
+}
+
+message BatchGetWorksGradeResp {
+    google.protobuf.Any head = 1;
+    map<string, ja.common.works.domain.audit.VideoGradeBo> infoMap = 2;
+}
+
+//作品评级--待评级、S级、A级、B级、已完成的各tab页分页列表
+message ListWorksByGradeReq {
+    google.protobuf.Any head = 1;
+    string author_name = 2;            //认证主体名称,关键字
+    string video_title = 3;            //作品标题，关键字
+    ja.common.works.domain.audit.SearchGradeType searchGradeType = 4; //查询作品各类评级   待评级、S级、A级、B级、已完成
+    int32 ctime_begin = 5;				//查询开始时间,单位：秒
+    int32 ctime_end = 6;				//查询结束时间,单位：秒
+    int32 page_no = 7;					//分页页码,从1开始
+    int32 page_size = 8;				//分页页码,默认10
+}
+
+message ListWorksByGradeResp {
+    google.protobuf.Any head = 1;
+    repeated ja.common.works.domain.audit.VideoAuditBo infoList = 2;
+}
+
+//作品评级--待评级、S级、A级、B级、已完成的各tab页总数
+message CountWorksByGradeReq {
+    google.protobuf.Any head = 1;
+    string author_name = 2;            //认证主体名称,关键字
+    string video_title = 3;            //作品标题，关键字
+    ja.common.works.domain.audit.SearchGradeType searchGradeType = 4; //查询作品各类评级   待评级、S级、A级、B级、已完成
+    int32 ctime_begin = 5;				//查询开始时间,单位：秒
+    int32 ctime_end = 6;				//查询结束时间,单位：秒
+}
+
+message CountWorksByGradeResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+//作品评级--某天已分发的曝光量总计
+message GetTotalExposureReq {
+    google.protobuf.Any head = 1;
+    string fixDate = 2;            //日期时间,一般为当天 yyyy-MM-dd
+}
+
+message GetTotalExposureResp {
+    google.protobuf.Any head = 1;
+    int64 total = 2;           //某天已分发的曝光量总计
+}
+

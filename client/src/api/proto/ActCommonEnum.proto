@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+import "PoetType.proto";
+
+package ja.common.act.enums;
+
+option java_multiple_files = false;
+
+//活动状态 -2=已删除  -1=已停用 1=已过期 2=未开始 3=进行中
+enum ActStatusEnum {
+	ActStatus_reserve = 0;		//保留
+	ActStatus_deleted = -2;		//-2=已删除
+	ActStatus_stopped = -1;		//-1=已停用
+	ActStatus_expired = 1;		// 1=已过期;
+	ActStatus_waiting = 2;		// 2=未开始
+	ActStatus_started = 3;		// 3=进行中
+}
+
+//兑奖状态，1=联系中、2=已联系、3=已完成领奖、4=已过期、5=已放弃、6=已取消
+enum ActPresentStateEnum {
+	ActPresentState_reserve = 0;		//保留
+	ActPresentState_contacting = 1;		//1=联系中
+	ActPresentState_contacted = 2;		//2=已联系
+	ActPresentState_finished = 3;		//3=已完成领奖
+	ActPresentState_expired = 4;		//4=已过期
+	ActPresentState_givedUp  = 5;		//5=已放弃
+	ActPresentState_cancelled = 6;		//6=已取消
+}
+
+//活动订阅状态   -1=已取消订阅  1=已订阅(默认) 2=从未订阅(默认)
+enum ActSubscribeStatusEnum {
+	ActSubscribeStatus_reserve = 0;			//保留
+	ActSubscribeStatus_cancelled = -1;		//-1=已取消订阅
+	ActSubscribeStatus_subscribed = 1;		// 1=已订阅
+	ActSubscribeStatus_none = 2;			// 2=从未订阅(默认)
+}
+
+//活动的用户黑名单   -1:不在黑白名单  1=黑名单，2=白名单
+enum ActWhListTypeEnum {
+	ActWhListType_reserve = 0;		//保留
+	ActWhListType_none = -1;		//-1=不在黑白名单
+	ActWhListType_black = 1;		//1=黑名单
+	ActWhListType_white = 2;		//2=白名单
+}
+
+
+//活动点赞、或者取消点赞、发布作品、删除作品
+enum ActNumOperEnum {
+	ActNumOper_reserve = 0;		//保留
+	ActNumOper_decrease = -1;	//-1=数量减1
+	ActNumOper_increase = 1;	// 1=数量加1
+}
+
+
+// 奖项规则类型  1=喜欢数排名  2=按喜欢数概率
+enum ActAwardTypeEnum {
+	ActAwardType_reserve = 0;		//保留
+	ActAwardType_likeCount = 1;		//1=喜欢数排名
+	ActAwardType_likePercent = 2;	//2=按喜欢数概率
+}
+
+//1=设定前几名  2=设定第几名
+enum ActAwardSubTypeEnum {
+	ActAwardSubType_reserve = 0;		//保留
+	ActAwardSubType_frontMembers = 1;	//1=设定前几名
+	ActAwardSubType_fixMember = 2;		//2=设定第几名
+}
+
+//活动奖项规则状态  -2=已删除  -1=已过期   1=正常
+enum RuleStatusEnum {
+	RuleStatus_reserve = 0;		//保留
+	RuleStatus_deleted = -2;	// -2=已删除
+	RuleStatus_expired = -1;	// -1=已过期
+	RuleStatus_normal = 1;		//  1=正常(默认)
+}
+
+//奖品状态  -2=已删除  -1=已停用   1=正常
+enum AwardItemStatusEnum {
+	AwardItemStatus_reserve = 0;		// 保留
+	AwardItemStatus_deleted = -2;		// -2=已删除
+	AwardItemStatus_stopped = -1;		// -1=已停用
+	AwardItemStatus_normal = 1;			//  1=正常(默认)
+}
+
+//活动banner图 1=可见 2=不可见
+enum BannerVisibleEnum {
+	BannerVisible_reserve = 0;		// 保留
+	BannerVisible_canSee = 1;		// 1=可见
+	BannerVisible_hidden = 2;		// 2=不可见
+}
+

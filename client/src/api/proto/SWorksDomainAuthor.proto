@@ -1,0 +1,222 @@
+syntax = "proto3";
+
+import "SWorksDomainCategory.proto";
+
+package ja.common.works;
+
+option java_multiple_files = false;
+
+enum AuthorStateEnum{
+	AUTHOR_NORMAL = 0;		// 正常
+	AUTHOR_STOPPED = 1;	// 停用
+}
+
+enum AuditAuthorListTypeEnum{
+	AUDIT_AUTHOR_WHITE = 0;               // 认证号审核白名单
+	AUDIT_AUTHOR_BLACK = 1;              // 认证号审核黑名单
+	AUDIT_AUTHOR_NORMAL = 2;             // 认证号既不在白名单，也不在黑名单
+	AUDIT_AUTHOR_ALL = 3;                // 所有
+}
+
+// 公众号的权重等级
+enum AuthorWeightLevelEnum{
+	AUTHOR_ReserveAuthorWeightLevelDef = 0;		// 占位项，不作使用
+	AUTHOR_General = 1;							// 普通级别
+	AUTHOR_Priority = 2;						// 优先级别
+}
+
+// 认证号类型   0=普通用户主认证  1=内部运营认证  2=转让的认证号
+enum AuthorCertifiedTypeEnum {
+	AUTHOR_PERSONAL_CERT = 0;                //0=个人认证
+	AUTHOR_OPER_CERT = 1;                    //1=内部运营认证
+	AUTHOR_CHANGE_FROM_OTHER = 2;            //2=转让的认证号
+}
+
+// 认证号的属性
+enum AuthorLabelTypeEnum {
+	AuthorLabelType_Reserved = 0;			// 占位符
+	AuthorLabelType_Normal = 1;				// 普通认证号
+	AuthorLabelType_Wxpublic = 2;			// 公众号
+	AuthorLabelType_Business = 3;			// 商务合作
+	AuthorLabelType_Recruit = 4;			// 外部招募
+	AuthorLabelType_Inter_Normal = 10;		// 运营内部认证号
+	AuthorLabelType_Inter_Spider = 11;		// 爬虫内部认证号
+}
+
+// 用于查询的认证号属性可先值
+enum SearchAuthorLabelTypeEnum {
+	SearchAuthorLabelType_All = 0;				// 所有
+	SearchAuthorLabelType_Normal = 1;			// 普通认证号
+	SearchAuthorLabelType_Wxpublic = 2;			// 公众号
+	SearchAuthorLabelType_Business = 3;			// 商务合作
+	SearchAuthorLabelType_Recruit = 4;			// 外部招募
+	SearchAuthorLabelType_Inter_Normal = 10;	// 运营内部认证号
+	SearchAuthorLabelType_Inter_Spider = 11;	// 爬虫内部认证号
+}
+
+////////////////////////////////////////////////////////
+//认证号--简单对象
+message AuthorSimpleBo {
+	int64 aid = 1;
+	string name = 2;
+}
+
+message AuthorWhiteBlackNewBo {
+	int64 aid = 1;                      //认证号aid
+	string author_name = 2;             //认证号名称
+	AuditAuthorListTypeEnum AuditAuthorListType = 3;        //认证号白黑名单类型  0=白名单  1=黑名单
+	int64 oper_uid  = 4;                //操作人id
+	int32 create_time = 5;				//创建时间,单位：秒
+}
+
+message UpdateMessageAuthorInfoBo {
+	int64 aid = 1; 	//所属作者/公众号
+	string vid = 2;//作品id
+	string title = 3;//标题
+}
+
+message AuthorInfoBo {
+	string aid = 1;						// 公众号id
+	string name = 2;					// 公众号名称
+	string headimage = 3;				// 公众号头像
+	string note = 4;					// 公众号说明
+	bool certified = 5;					// 官方认证的?
+	int32 weightlevel = 6;				// 权重级别
+	int32 videocount = 7;				// 作品数
+	AuthorStateEnum state = 8;				// 公众号状态
+	repeated VideoCategorySimpleBo category = 9; //分类
+	AuthorCertifiedTypeEnum authorCertifiedType = 10;	//认证号类型   0=普通用户主认证  1=内部运营认证  2=转让的认证号
+}
+
+// 包含发文数量的认证号信息
+message AuthorPubInfoBo {
+	AuthorInfoBo author = 1;
+	int32 pubcount = 2;					// 发文数量
+}
+
+message AuthorExtInfoBo {
+	string aid = 1;						// 公众号id
+	string name = 2;					// 公众号名称
+	string headimage = 3;				// 公众号头像
+	string note = 4;					// 公众号说明
+	bool certified = 5;					// 官方认证的?
+	int32 subcount = 6;					// 订阅数量/粉丝数量
+	int32 videocount = 7;				// 音视频作品数量
+	string channel = 8;					// 绑定的房间频道号
+	int64 uid = 9;						// 绑定的用户id
+	int64 likecount = 10;				// 收到的点赞数
+	AuthorStateEnum state = 11;			// 公众号状态
+	repeated VideoCategorySimpleBo category = 12;		//分类
+	AuthorCertifiedTypeEnum authorCertifiedType = 13;	//认证号类型   0=普通用户主认证  1=内部运营认证  2=转让的认证号
+}
+
+message SubscribeStateInfoBo{
+	bool allowsubscribe = 1;				// 是否允许订阅，作品的作者无法订阅自己的作品
+	bool subscribe = 2;						// 订阅状态，true=订阅了,false=没订阅
+}
+
+message AuthorAuthInfoBo{
+	int64 uid = 1;							// 用户id
+	//string nick = 2;						// 用户昵称
+	string headimage = 3;					// 公众号头像
+	string name = 4;						// 公众号名称
+	string verifycode = 5;					// 认证码
+	string phone = 6;						// 手机号码
+	string wxno = 7;						// 微信号码
+	int64 createtime = 8;					// 创建时间/认证时间
+	string aid = 9;							// 公众号id
+	string note = 10;						// 公众号简介
+	string introducer = 11;					// 发码人
+	AuthorWeightLevelEnum weightlevel = 12;					// 权重级别
+	repeated VideoCategorySimpleBo category = 13;		//分类
+	int64 lastpubtime = 14;					// 最后发布时间
+}
+
+
+message DayAuthorLossInfoBo{
+	int32 days = 1;				// 未发作品的天数, 值=11代表10天以上，12表示未发布作品
+	int32 count = 2;			// 天数对应的认证号数量
+}
+
+// 流失的认证号信息
+message LossAuthorInfoBo {
+	string aid = 1;										// 公众号id
+	int64 uid = 2;										// 用户id
+	string name = 3;									// 公众号名称
+	string headimage = 4;								// 公众号头像
+	string introducer = 5;								// 发码人
+	int64 lastpubtime = 6;								// 最后发布作品的时间
+	int32 videocount = 7;								// 作品数
+	AuthorStateEnum state = 8;							// 公众号状态
+	repeated VideoCategorySimpleBo category = 9;		//分类
+	AuthorCertifiedTypeEnum authorCertifiedType = 10;	//认证号类型   0=普通用户主认证  1=内部运营认证  2=转让的认证号
+}
+
+
+message InternalUserNewBo {
+	int64 uid = 1;                   	//绑定的音盟用户id
+	int32 author_num = 2;              //认证号个数
+	int32 create_time = 3;             //创建时间,单位：秒
+	string nick = 4;                   //用户昵称
+}
+
+
+message InternalAuthorNewBo {
+	int64 aid = 1;                   	//内部认证号aid
+	int64 uid = 2;                   	//音盟用户id
+	string name = 3;              		//认证主体名称
+	string head_image = 4;              //头像地址
+	string note = 5;				    //认证主体简介
+	repeated  VideoCategorySimpleBo categoryInfos = 6;	//认证主体的分类
+	string wechat = 7;                  //微信号
+	string phone = 8;              		//手机号码
+	int32 is_default = 9;              //是否默认内部认证号(目前是按创建时间先后顺序来定)
+	AuthorCertifiedTypeEnum authorCertifiedType = 10;	//认证号类型   0=普通用户主认证  1=内部运营认证  2=转让的认证号
+}
+
+
+message AuthorStatInfoBo{
+	string aid = 1;							// 认证主体id/公众号id
+	int64 uid = 2;							// 用户id
+	string nick = 3;						// 用户昵称
+	string authorName = 4;					// 认证名称
+	int64 visitorCount = 5;					// 导量数
+	int64 regUserCount = 6;					// 授权转化数
+	int64 subscribeCount = 7;				// 订阅数
+	int64 newSubscribeCount = 8;			// 新增订阅数
+	int64 publishCount = 9;					// 发布作品数
+	int64 playCount = 10;					// 播放次数
+	int64 playUserCount = 11;				// 播放用户数
+	int64 likeCount = 12;					// 点赞数
+	int64 distinctPlayCount = 13;			// 去重播放数
+	int64 playCountExcludeRecommend = 14;	// 去推荐播放数
+}
+
+
+message AuthorStatDetailInfoBo{
+	int64 date = 1;					// 日期的时间戳
+	int64 playCount = 2;			// 播放次数
+	int64 playUserCount = 3;		// 播放人数
+	int64 likeCount = 4;			// 点赞次数
+	int64 newSubscribeCount = 5;	// 新增订阅数
+	int64 distinctPlayCount = 6;	// 去重播放数
+}
+
+message AuthorAuthBo{
+	int64 uid = 1;							// 用户id
+	string headimage = 2;					// 公众号头像
+	string name = 3;						// 公众号名称
+	string verifycode = 4;					// 认证码
+	string phone = 5;						// 手机号码
+	string wxno = 6;						// 微信号码
+	int64 createtime = 7;					// 创建时间/认证时间
+	string aid = 8;							// 公众号id
+	string note = 9;						// 公众号简介
+	string introducer = 10;					// 发码人
+	AuthorWeightLevelEnum weightlevel = 11;					// 权重级别
+	repeated VideoCategorySimpleBo category = 12;		//领域
+	int64 lastpubtime = 13;					// 最后发布时间
+	AuthorCertifiedTypeEnum authorCertifiedType = 14;
+	AuthorLabelTypeEnum labelType = 15;			// 认证号的属性
+}
+

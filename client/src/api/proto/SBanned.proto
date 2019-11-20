@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+
+package ja.common.banned;
+
+option java_multiple_files = false;
+
+service SBanned {
+	option (poet.ex_service_type) = "srv";
+	option (poet.ex_service_handler_project) = "srv.user_srv";
+	option (poet.ex_service_rpc_project) = "common.userbase";
+
+	//踢下线(如果在线的话) 仅仅是踢下线，该用户可以马上重新登录上来
+	rpc KickUser(KickUserReq) returns (KickUserResp) {}
+	//封号并踢下线
+	rpc BannedUser(BannedUserReq) returns (BannedUserResp) {}
+	//封禁列表
+	rpc BannedPage(BannedPageReq) returns (BannedPageResp) {}
+}
+
+message BannedUserInfo {
+	int64 uid = 1;				//用户id
+	string opt = 2;				//操作者
+	string reason = 3;			//封禁原因
+	int64 releasetime = 4;		//解封时间
+	int64 createtime = 5;		//创建时间
+}
+
+message BannedPageResp {
+	google.protobuf.Any head = 1;	//请求头
+	repeated BannedUserInfo infos = 2;//列表
+}
+
+message BannedPageReq {
+	google.protobuf.Any head = 1;	//请求头
+	int32 pageid = 2;				//页面id 0 = 首页
+	int32 count = 3;				//数量
+}
+
+message BannedUserResp {
+	google.protobuf.Any head = 1;	//请求头
+}
+
+message BannedUserReq {
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;					//用户id
+	string opt = 3;					//操作者
+	string reason = 4;				//原因
+	int64 releasetime = 5;			//解封时间
+}
+
+message KickUserResp {
+	google.protobuf.Any head = 1;	//请求头
+}
+
+message KickUserReq {
+	google.protobuf.Any head = 1;	//请求头
+	int64 uid = 2;					//用户id
+	string opt = 3;					//操作者
+	string reason = 4;				//原因
+}

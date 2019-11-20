@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "AsyncTaskCommonEnum.proto";
+
+package ja.common.asynctask;
+
+option java_multiple_files = false;
+
+message JobBo {
+    int64 id = 1;           //记录id，主键，自增
+    string taskName = 2;    //任务名称
+    ja.common.asynctask.enums.Task task = 3; // 任务类型
+    int64 operUid = 4;      //操作人id
+    int32 createTime = 5;   //创建时间，单位：秒
+    int32 updateTime = 6;   //更新时间，单位：秒
+    string taskDesc = 7;    //任务描述
+    ja.common.asynctask.enums.TaskStatus taskStatus = 8; //任务状态  1=待处理  2=处理失败  3=处理成功
+    string taskParam = 9;   //任务参数json
+    string taskResult = 10; //任务结果数据json
+    int32 failNum = 11;     //失败次数
+    string errorMsg = 12;   // 任务失败时返回的错误信息
+}
+
+
+
+
+
+
+

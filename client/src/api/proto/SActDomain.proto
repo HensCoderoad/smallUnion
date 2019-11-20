@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+import "ActCommonEnum.proto";
+import "GoodsCommonEnum.proto";
+import "SGoodsDomain.proto";
+
+package ja.common.act;
+
+option java_multiple_files = false;
+
+//活动信息
+message ActBo {
+	int64 actId = 1;		//活动id
+	int64 uid = 2; 			//创建用户uid
+	ja.common.act.enums.ActStatusEnum actStatus = 3;
+	string actTitle = 4;	//活动主标题
+	string actSubTitle = 5;	//活动副标题
+	string actImg = 6;			//活动图地址
+	int64 actCategoryId = 7;		//活动的分类id
+	string actDetail = 8;			//活动详情
+	int32 beginTime = 9;		//活动开始时间，单位：秒
+	int32 endTime = 10;			//活动结束时间，单位：秒
+	int32 createTime = 11;		// 创建时间,单位：秒
+	int32 updateTime = 12;		// 修改时间,单位：秒
+	int32 awardTime = 13;		// 抽奖时间,单位：秒
+	int64 operUid = 14;			//运营后台操作人id(非必填)
+	bool hasAward = 15;			//是否有奖品  true:有  false:无
+}
+
+
+//活动订阅用户信息
+message ActSubscribeBo {
+	int64 id = 1;		//记录id
+	int64 actId = 2; 	//活动id
+	int64 uid = 3;		//订阅用户uid
+	ja.common.act.enums.ActSubscribeStatusEnum subscribeStatus = 4;
+	int32 createTime = 5;		//创建时间,单位：秒
+	int32 updateTime = 6;		//修改时间，单位：秒
+}
+
+
+//活动参与者信息
+message ActJoinBo {
+	int64 id = 1;			//记录id
+	int64 actId = 2; 		//活动id
+	int64 joinUid = 3;		//参与者uid
+	int32 videoCount = 4;	//发布作品数量
+	int32 likeCount = 5;	//点赞数量
+	int32 createTime = 6;	// 创建时间,单位：秒
+	int32 updateTime = 7;	// 修改时间,单位：秒
+}
+
+// 活动配置元数据
+message ActConfigMetaBo {
+	int32 switchFlag = 1;	 			// 1:先审后发  2:先发后审
+	int32 publishVideoNumOneUid = 2;	//在某个活动中，单个用户可发布的作品数上限; 不限制时，为0;
+}
+
+message ActConfigBo {
+	int64 actId = 1;				//活动id
+	ActConfigMetaBo config = 2; 	//配置的内容json
+	int64 operUid = 3;				//操作人员uid(来自运营后台，非音盟uid)
+	int32 createTime = 4;			//创建时间,单位：秒
+	int32 updateTime = 5;			//修改时间,单位：秒
+}
+
+//活动的黑白名单列表
+message ActWhListBo {
+	int64 id = 1;				//记录id
+	int64 actId = 2;			//活动id
+	int64 uid = 3; 				//用户uid
+	ja.common.act.enums.ActWhListTypeEnum whListType = 4;
+	int64 operUid = 5;			//操作人员uid(来自运营后台，非音盟uid)
+	int32 createTime = 7;		//创建时间,单位：秒
+}
+
+//活动banner图
+message ActBannerBo {
+	int64 id = 1;				//记录id
+	string bannerName = 2;		//banner名称
+	string bannerImage = 3;		// banner图地址
+	string jumpUrl = 4;			//点击跳转链接（可为空）
+	string bannerTips = 5;		//hover上去的tips信息
+	int32 weight = 6;			//banner图的排序权重
+	int32 createTime = 7;		//创建时间，单位：秒
+	int32 updateTime = 8;		//修改时间，单位：秒
+	ja.common.act.enums.BannerVisibleEnum bannerVisible = 9;
+	int64 operUid = 10;			//操作者id
+}
+
+
+//活动奖项规则表
+message AwardRuleBo {
+	int64 id = 1;			//记录id
+	int64 actId = 2;		//活动id
+	string ruleName = 3;	//奖项名称(一等、二等、。。。)
+	int32 weight = 4;			//排序顺序
+	int32 expiredTime = 5;		//过期时间，单位：秒
+	int32 awardNum = 6;			//奖品数量
+	ja.common.act.enums.ActAwardTypeEnum actAwardType = 7;
+	ja.common.act.enums.ActAwardSubTypeEnum actAwardSubType = 8;
+	string awardTypeNumber = 9;  // 类型的具体数值
+	string awardSponsor = 10;	//奖品的赞助商
+	string awardDetail = 11;	//描述
+	string extend = 12;			//扩展字段
+	ja.common.act.enums.RuleStatusEnum ruleStatus = 13;
+	int32 createTime = 14;		//创建时间，单位：秒
+	int32 updateTime = 15;		//修改时间，单位：秒
+	int64 goodsId = 16; 	//关联商品id (可以为空; 考虑到兼容小程序，这里可能不会关联商品库)
+	string goodsNameAlias = 17;	//商品别名（iPhone,小米...）
+	string goodsUrlAlias = 18;		//商品图片地址别名
+	string awardImage = 19;			//奖品规则的完整图片（可空）
+}
+
+//活动具体奖品信息
+message ActAwardBo {
+	int64 id = 1;			//记录id
+	int64 actId = 2; 		//活动id
+	AwardRuleBo ruleBo = 3;					//活动规则信息
+	ja.common.goods.GoodsBo goodsBo = 4; 	//关联商品信息
+	int64 goodsItemId = 5;	//关联具体的商品物件id
+	int32 createTime = 7;	// 创建时间,单位：秒
+	int32 updateTime = 8;	// 修改时间,单位：秒
+	ja.common.goods.enums.GoodsItemStatusEnum goodsItemStatus = 9;
+	string extend = 10;		//扩展字段
+}
+
+
+//活动中奖名单信息
+message ActLuckyBo {
+	int64 id = 1;			//记录id
+	int64 actId = 2; 		//活动id
+	int64 luckyUid = 3;		//中奖人uid
+	int64 presentUid = 6;			//兑现操作人（运营人员）id
+	int32 presentTime = 7;			//兑奖时间，单位：秒
+	ja.common.act.enums.ActPresentStateEnum presentState = 8;
+	int64 createUid = 9;			//创建人用户id
+	int32 createTime = 10;			//创建时间,单位：秒
+	ActAwardBo actAwardBo = 11; 	//活动奖品信息
+	int32 expireTime = 12;			//过期时间，单位：秒
+}
+
+
+
+//////////////////////////////////////////////////////////
+//活动作品关联表
+message ActVideoBo {
+	int64 id = 1;			//记录id
+	int64 actId = 2;		//活动id
+	string vid = 3; 		//作品id
+	int32 createTime = 4;	//创建时间,单位：秒
+}
+
+
+

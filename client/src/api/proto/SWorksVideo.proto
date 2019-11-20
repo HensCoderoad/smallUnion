@@ -1,0 +1,152 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "WorksCommonEnum.proto";
+import "SWorksDomainVideo.proto";
+import "SWorksDomainShare.proto";
+
+package ja.common.works;
+
+option java_multiple_files = false;
+
+service SWorksVideo {
+	option (poet.ex_service_type) = "srv";
+	option (poet.ex_service_handler_project) = "srv.works_srv";
+	option (poet.ex_service_rpc_project) = "common.worksbase";
+
+	rpc AddVideoFromSpider(AddVideoFromSpiderReq) returns(AddVideoFromSpiderResp){}
+
+	// 添加一个作品
+	rpc AddVideo2(AddVideo2Req) returns(AddVideo2Resp){}
+
+	// 批量获取作品信息
+	rpc BatchVideoInfo2(BatchVideoInfo2Req) returns(BatchVideoInfo2Resp){}
+
+	// 通过小程序二维码的参数获取一个作品的信息
+	rpc GetVideoInfoByScene2(GetVideoInfoByScene2Req) returns(GetVideoInfoByScene2Resp){}
+
+	// 获取一个作品的信息
+	rpc GetVideoInfo2(GetVideoInfo2Req) returns(GetVideoInfo2Resp){}
+
+	// 获取用户订阅的所有公众号最近的作品id列表
+	rpc GetSubscribeVids(GetSubscribeVidsReq) returns(GetSubscribeVidsResp){}
+
+
+}
+
+message AddVideoFromSpiderReq{
+	google.protobuf.Any head = 1;
+	// 基本信息
+	int64 uid = 2;						// 操作用户
+	int64 aid = 3;						// 公众号id
+	string videourl = 4;				// 作品url
+	string coverurl = 5;				// 封面url
+	int32 type = 6;						// 作品类型 0=视频，1=音频
+	int32 duration = 7;					// 时长
+	string title = 8;					// 标题
+	string note = 9;					// 内容说明
+	bool publish = 10;					// 是否立即发布
+	string shareimage = 11;				// 分享时使用的图片，如果为空则默认取封面
+	int32 width = 12;					// 视频的宽度
+	int32 height = 13;					// 视频的高度
+	int64 cpubtime = 14;				// 用户自定义的发布时间，为0则取系统时间
+	string bid = 15;					// 业务流水号，可以为空。注：对一个作品的重复提交必须保证bid一致，这个是用来解决超时重复提交的问题
+	repeated int64 category = 16;		//领域id
+	int32 videopause = 17;				//看了多久视频就要订阅后才能观看完整
+	int64 vsid = 18;					// 所属的合集id
+	// 评级相关
+	int32 gradeType = 21; 				// 1=A级、2=B级、3=S级
+	int32 gradeValue = 22; 				//评级的值,比如 1000,2000(初开始来源评级所对应的值，但可自定义修改)
+	int32 recommendMinLimit = 23; 		//推荐最小暴光基数；当作品曝光量超过这个就是热门作品（目前是设置的B级所对应的暴光量） -1:不调整
+	// 推荐相关
+	int32 recommendStatus = 31;          //作品是否已上推荐  1=上推荐  2=下推荐
+	// 审核相关
+	int32 audit_operation = 41; 		//作品审核状态  0=通过  1=通过且打上C类标记
+	string mark = 42; 					//审核说明（注：C类标志必须提供说明）
+	string mark_type = 43; 				//标记类型,目前暂时只有C类,可空
+}
+
+message AddVideoFromSpiderResp{
+	google.protobuf.Any head = 1;
+	string vid = 2;
+
+}
+
+message AddVideo2Req{
+	google.protobuf.Any head = 1;
+	int64 opuid = 2;						// 操作用户
+	int64 aid = 3;						// 公众号id
+	string videourl = 4;				// 作品url
+	string coverurl = 5;				// 封面url
+	ja.common.works.enums.VideoType video_type = 6;					// 作品类型
+	int32 duration = 7;					// 时长
+	string title = 8;					// 标题
+	string note = 9;					// 内容说明
+	bool publish = 10;					// 是否立即发布
+	string shareimage = 11;				// 分享时使用的图片，如果为空则默认取封面
+	int32 width = 12;					// 视频的宽度
+	int32 height = 13;					// 视频的高度
+	int64 cpubtime = 14;				// 用户自定义的发布时间，为0则取系统时间
+	string bid = 15;					// 业务流水号，可以为空。注：对一个作品的重复提交必须保证bid一致，这个是用来解决超时重复提交的问题
+	repeated int64 category = 16;		//领域id
+	int32 videopause = 17;				//看了多久视频就要订阅后才能观看完整
+	int64 vsid = 18;					// 所属的合集id
+	ja.common.works.enums.ProductChargeType charge_type = 19;				// 收费类型
+	int32 price = 20;					// 价格，以分为单位
+	ja.common.works.enums.ProductChargeType ios_charge_type = 21;			// ios收费类型
+}
+
+message AddVideo2Resp{
+	google.protobuf.Any head = 1;
+	string vid = 2;						// 作品的id
+}
+
+message BatchVideoInfo2Req{
+	google.protobuf.Any head = 1;
+	repeated string vid = 2;				// 作品id
+	int64 mode = 3;							// 数据组装模式，位操作，可组装的值详见 VideoBoPart。0=组装所有
+}
+
+message BatchVideoInfo2Resp{
+	google.protobuf.Any head = 1;
+	repeated ja.common.works.domain.video.VideoBo info = 2;
+}
+
+message GetVideoInfoByScene2Req{
+	google.protobuf.Any head = 1;
+	string scene = 2;						// 小程序二维码解析出来的scene参数
+	bool check_export = 3;					// 是否检查作品的对外可见性，如果检测的话且不可见则会返回错误码
+}
+
+message GetVideoInfoByScene2Resp{
+	google.protobuf.Any head = 1;
+    ja.common.works.domain.video.VideoBo info = 2;
+	SceneInfoBo sceneinfo = 3;
+}
+
+message GetVideoInfo2Req{
+	google.protobuf.Any head = 1;
+	string vid = 2;
+	bool check_export = 3;					// 是否检查作品的对外可见性，如果需要检测且不可见则会返回错误码
+    int64 mode = 4;                         // 数据组装模式，位操作，可组装的值详见 VideoBoPart。0=组装所有
+}
+
+message GetVideoInfo2Resp {
+	google.protobuf.Any head = 1;
+    ja.common.works.domain.video.VideoBo info = 2;
+}
+
+message GetSubscribeVidsReq{
+	google.protobuf.Any head = 1;
+	int64 uid = 2;							// 当前用户id
+	int64 offset = 3;						// 起始作品位置，第一个为0
+	int32 count = 4;						// 要获取的数量
+	bool include_self_videos = 5;			// 自己的作品是否也包含在内
+}
+
+message GetSubscribeVidsResp{
+	google.protobuf.Any head = 1;
+	repeated string vid = 2;				// 作品id列表
+	int64 next = 3;							// 下一批起始记录的发布时间戳，0代表没有下一批了
+}

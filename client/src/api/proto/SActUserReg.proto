@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "PoetType.proto";
+import "UserCommonEnum.proto";
+import "SActUserRegDomain.proto";
+package ja.common.act;
+
+option java_multiple_files = false;
+
+service SActUserReg {
+    option (poet.ex_service_type) = "srv";
+    option (poet.ex_service_handler_project) = "srv.act_srv";
+    option (poet.ex_service_rpc_project) = "common.actbase";
+
+    /////////////////////////////////////////////////////////////////////
+    // 活动--运营后台--查询新注册用户总数
+    rpc CountActUserReg(CountActUserRegReq) returns(CountActUserRegResp){}
+
+    // 活动--运营后台--查询指定渠道新注册用户总数
+    rpc CountUserReg(CountUserRegReq) returns(CountUserRegResp){}
+
+    // 活动--运营后台--查询指定用户的注册渠道
+    rpc GetUserRegSource(GetUserRegSourceReq) returns(GetUserRegSourceResp){}
+}
+
+
+message GetUserRegSourceReq {
+    google.protobuf.Any head = 1;
+    int64 uid = 2;
+}
+
+message GetUserRegSourceResp {
+    google.protobuf.Any head = 1;
+    UserRegSourceBo info = 2;
+}
+
+message CountActUserRegReq {
+    google.protobuf.Any head = 1;
+    int64 actId = 2;
+}
+
+message CountActUserRegResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
+
+
+message CountUserRegReq {
+    google.protobuf.Any head = 1;
+    string regSource = 2;       //注册来源,可能是活动的id,正常的注册，影集id等
+    ja.common.user.enums.UserRegSourceTypeEnum userRegSourceType = 3;    //注册来源定义
+    int32 beginTime = 4;        //开始时间，单位：秒
+    int32 endTime = 5;          //结束时间，单位：秒
+}
+
+message CountUserRegResp {
+    google.protobuf.Any head = 1;
+    int32 total = 2;
+}
